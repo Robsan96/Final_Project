@@ -9,9 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+public class Comment {
 
-    int tag_id;
-    String name;
-
+    private int id;
+    private String content;
+    private int post;
+    private int profile;
+    private int reply;
+    private String creationDate;
 }
+

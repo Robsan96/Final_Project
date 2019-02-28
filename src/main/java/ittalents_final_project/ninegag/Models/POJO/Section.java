@@ -7,11 +7,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+@NoArgsConstructor
+public class Section {
 
-    int tag_id;
+    int id;
     String name;
-
 }
