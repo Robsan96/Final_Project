@@ -2,9 +2,9 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
-import ittalents_final_project.ninegag.exceptions.InvalidPasswordException;
-import ittalents_final_project.ninegag.exceptions.NotLoggedException;
-import ittalents_final_project.ninegag.exceptions.WrongEmailOrPasswordException;
+import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
+import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
+import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

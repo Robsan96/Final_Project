@@ -1,4 +1,4 @@
-package ittalents_final_project.ninegag.utilities;
+package ittalents_final_project.ninegag.Utils;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;

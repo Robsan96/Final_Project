@@ -2,7 +2,6 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.CommentDAO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
-import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,15 +41,18 @@ public class CommentController extends BaseController {
     public String voteComment(@RequestParam("commentId") int commentId,
                               @RequestParam("vote") boolean vote,
                               HttpSession session) throws EmptyParameterException, NotLoggedException {
-        validateLogged(session);
-        User user = (User) session.getAttribute(LOGGED);
-        if (user.getUser_ID() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
-        }
+     //   validateLogged(session);
+      //  User user = (User) session.getAttribute(LOGGED);
+       // if (user.getUser_ID() == 0) {
+        //    throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+      //  }
         if (commentId == 0) {
             throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
         }
-        if (daoC.voteComment(user.getUser_ID(), commentId, vote) == 1) {
+        if(daoC.getById(commentId)==null){
+            throw new NullPointerException("There is no comment with that id !");
+        }
+        if (daoC.voteComment(2, commentId, vote) == 1) {
             return "Voted";
         } else {
             return "Vote failed , pls try again";

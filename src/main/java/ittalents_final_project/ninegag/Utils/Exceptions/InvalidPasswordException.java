@@ -1,4 +1,4 @@
-package ittalents_final_project.ninegag.utilities.exceptions;
+package ittalents_final_project.ninegag.Utils.Exceptions;
 
 public class InvalidPasswordException extends Exception {
 

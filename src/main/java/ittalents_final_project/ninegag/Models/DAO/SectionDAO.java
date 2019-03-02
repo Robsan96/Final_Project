@@ -18,7 +18,7 @@ public class SectionDAO {
     NamedParameterJdbcTemplate jd;
     @Autowired
     JdbcTemplate jdbcTemplate;
-    public static final String SQL = "SELECT section_id AS id , section_name AS name FROM sections";
+    public static final String SQL = "SELECT section_id , section_name FROM sections";
 
     public List<Section> getAll() {
         try {

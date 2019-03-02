@@ -1,11 +1,9 @@
-package ittalents_final_project.ninegag.utilities.exceptions;
+package ittalents_final_project.ninegag.Utils.Exceptions;
 
-public class GagException extends Exception{
+public class GaGException extends Exception {
 
-    public class GaGException extends Exception{
-        public GaGException(String message) {
-            super(message);
-        }
+    public GaGException(String message) {
+        super(message);
     }
-
 }
+

@@ -1,5 +1,8 @@
-package ittalents_final_project.ninegag.utilities.exceptions;
+package ittalents_final_project.ninegag.Utils.Exceptions;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class NotLoggedException extends Exception {
 
     public NotLoggedException(String message) {

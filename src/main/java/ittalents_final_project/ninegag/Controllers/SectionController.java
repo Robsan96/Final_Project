@@ -3,6 +3,7 @@ package ittalents_final_project.ninegag.Controllers;
 import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import ittalents_final_project.ninegag.Utils.Exceptions.AlreadyExistsException;
+import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class SectionController extends BaseController {
     }
 
     @GetMapping(value = "/id/{value}")
-    public Section showSection(@PathVariable(value = "value") int id)  {
+    public Section showSection(@PathVariable(value = "value") int id) throws NotLoggedException {
         Section section = dao.getById(id);
         if (section == null) {
             throw new NullPointerException("Section with that id does not exist");
@@ -50,9 +51,9 @@ public class SectionController extends BaseController {
     @PostMapping(value = "/{name}")
     public String addSection(@PathVariable(value = "name") String name) throws AlreadyExistsException {
         if (dao.getByName(name) == null) {
-            if(dao.addSection(name)==1){
+            if (dao.addSection(name) == 1) {
                 return "Section added successfully";
-            }else {
+            } else {
                 return "Section was not added for some reason,pls try again or contact the programer";
             }
         } else {
