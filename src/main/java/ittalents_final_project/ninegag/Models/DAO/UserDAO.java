@@ -10,7 +10,7 @@ public interface UserDAO {
 
     public void deleteUser(long id);
 
-    public Object findUserByEmailAndPassword(String email, String password);
+    public Object findUserByEmail(String email);
 
     public Object findUserByID(long profile_id);
 }

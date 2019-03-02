@@ -28,6 +28,7 @@ public class UserDAOImplem implements UserDAO {
             parameterSource.addValue("email", user.getEmail());
             parameterSource.addValue("username", user.getUsername());
             parameterSource.addValue("password", user.getPassword());
+            parameterSource.addValue("salt", user.getSalt());
             parameterSource.addValue("full_name", user.getFull_name());
             parameterSource.addValue("birthday", user.getBirthday());
             parameterSource.addValue("gender_ID", user.getGender_ID());
@@ -50,6 +51,7 @@ public class UserDAOImplem implements UserDAO {
             user.setEmail(rs.getString("email"));
             user.setUsername(rs.getString("username"));
             user.setPassword(rs.getString("password"));
+            user.setSalt(rs.getString("salt"));
             user.setFull_name(rs.getString("full_name"));
             user.setBirthday(rs.getDate("birthday"));
             user.setGender_ID(rs.getInt("gender_ID"));
@@ -67,32 +69,32 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public void addUser(User user) {
-        String sql = "INSERT INTO users(email,username,password) VALUES(:email, :username, :password)";
+        String sql = "INSERT INTO users(email,username,password,salt) VALUES(:email, :username, :password, :salt)";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
     public void updateUser(User user) {
-        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE profile_ID = :profile_ID";
+        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
-    public void deleteUser(long profile_ID) {
-        String sql = "DELETE FROM users WHERE profile_ID = :profile_ID";
+    public void deleteUser(long user_ID) {
+        String sql = "DELETE FROM users WHERE user_ID = :user_ID";
 
-        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new User(profile_ID)));
+        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new User(user_ID)));
     }
 
-    public Object findUserByEmailAndPassword(String email, String password) {
-        String sql = "SELECT * FROM users WHERE email = :email AND password = :password";
+    public User findUserByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = :email";
 
-        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email,password)), new ProfileMapper());
+        return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new ProfileMapper());
     }
 
-    public Object findUserByID(long profile_id) {
-        String sql = "SELECT * FROM users WHERE profile_ID = :profile_ID";
+    public Object findUserByID(long user_ID) {
+        String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
 
-        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(profile_id)), new ProfileMapper());
+        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new ProfileMapper());
     }
 }

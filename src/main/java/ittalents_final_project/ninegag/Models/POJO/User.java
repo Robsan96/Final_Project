@@ -16,6 +16,7 @@ public class User {
     private String email;
     private String username;
     private String password;
+    private String salt;
     private String full_name;
     private java.sql.Date date_created;
     private java.sql.Date birthday;
@@ -33,9 +34,8 @@ public class User {
         this.user_ID = user_ID;
     }
 
-    public User(String email, String password) {
+    public User(String email) {
         this.email = email;
-        this.password = password;
     }
 
     @Override
@@ -45,11 +45,12 @@ public class User {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
                 ", full_name='" + full_name + '\'' +
                 ", date_created=" + date_created +
                 ", birthday=" + birthday +
-                ", gender_id=" + gender_ID +
-                ", country_id=" + country_ID +
+                ", gender_ID=" + gender_ID +
+                ", country_ID=" + country_ID +
                 ", description='" + description + '\'' +
                 ", facebook_account='" + facebook_account + '\'' +
                 ", google_account='" + google_account + '\'' +
