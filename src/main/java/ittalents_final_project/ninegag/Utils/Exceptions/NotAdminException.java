@@ -1,7 +1,13 @@
-package ittalents_final_project.ninegag.Utils.Exceptions;
+package ittalents_final_project.ninegag.utilities.exceptions;
 
-public class NotAdminException extends GaGException {
+public class NotAdminException extends Exception {
+
     public NotAdminException(String message) {
         super(message);
+    }
+
+    @Override
+    public String getMessage() {
+        return "Not an admin";
     }
 }

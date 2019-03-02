@@ -1,7 +1,13 @@
-package ittalents_final_project.ninegag.Utils.Exceptions;
+package ittalents_final_project.ninegag.utilities.exceptions;
 
-public class NotLoggedException extends GaGException {
+public class NotLoggedException extends Exception {
+
     public NotLoggedException(String message) {
         super(message);
+    }
+
+    @Override
+    public String getMessage() {
+        return "you are not logged in.";
     }
 }

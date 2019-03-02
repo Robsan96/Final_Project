@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,21 +36,9 @@ public class CommentDAO {
         }
     }
 
-    @Transactional
     public int deleteComment(Comment comment) {
-        try {
-            List<Comment> coments = this.getAllByComment(comment);
-            for (Comment coment1 : coments) {
-                deleteComment(coment1);
-            }
-            jdbcTemplate.update("DELETE FROM comments_likes WHERE comment_id=?", new Object[]{comment.getId()});
-            jdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID=?", new Object[]{comment.getId()});
-            jdbcTemplate.update("DELETE FROM comments WHERE comment_ID=?", new Object[]{comment.getId()});
-            return 1;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return 0;
-        }
+        String sql = "DELETE FROM comments WHERE comment_ID=?";
+        return jdbcTemplate.update(sql, new Object[]{comment.getId()});
     }
 
     public List<Comment> getAllByPost(Post post) {
@@ -70,7 +57,7 @@ public class CommentDAO {
         return comments;
     }
 
-    public int voteComment(long userId, int commentId, boolean vote) {
+    public int voteComment(int userId, int commentId, boolean vote) {
         if (jdbcTemplate.queryForObject("SELECT COUNT(*) " +
                         "FROM comments_likes WHERE profile_id=? AND comment_id=?",
                 new Object[]{userId, commentId}, Integer.class) == 1) {

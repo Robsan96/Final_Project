@@ -18,7 +18,7 @@ public class SectionDAO {
     NamedParameterJdbcTemplate jd;
     @Autowired
     JdbcTemplate jdbcTemplate;
-    public static final String SQL = "SELECT section_ID , section_name FROM final_project.sections";
+    public static final String SQL = "SELECT section_id AS id , section_name AS name FROM sections";
 
     public List<Section> getAll() {
         try {
@@ -49,7 +49,7 @@ public class SectionDAO {
     }
 
     private Section mapRow(ResultSet rs) throws SQLException {
-       return new Section(rs.getInt("section_ID"),rs.getString("section_name"));
+        return new Section(rs.getInt("section_ID"), rs.getString("section_name"));
     }
 
     public int addSection(String name) {
