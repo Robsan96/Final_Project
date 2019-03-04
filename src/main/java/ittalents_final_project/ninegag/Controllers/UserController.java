@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -30,12 +31,12 @@ public class UserController extends BaseController {
                 try {
                     throw new WrongEmailOrPasswordException();
                 } catch (WrongEmailOrPasswordException e) {
-                    System.out.println(e.getMessage());
+                    e.getMessage();
                 }
             }
         }
         catch (EmptyResultDataAccessException e){
-            System.out.println("Wrong username or password.");
+            e.getMessage();
         }
     }
 
@@ -46,34 +47,27 @@ public class UserController extends BaseController {
             session.setAttribute(LOGGED, null);
         }
         catch (NotLoggedException e){
-            System.out.println(e.getMessage());
+            e.getMessage();
         }
     }
 
     @PostMapping(value = "/register")
-    public void saveUser(@RequestBody User user, HttpSession session){
-        try {
-            validateLogged(session);
-            if (validatePassword(user.getPassword())) {
-                String salt = PasswordUtils.getSalt(30);
-                String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
-                user.setPassword(securedPassword);
-                user.setSalt(salt);
-                dao.addUser(user);
-                session.setAttribute(LOGGED, user);
-            } else {
-                try {
-                    throw new InvalidPasswordException();
-                } catch (InvalidPasswordException e) {
-                    System.out.println(e.getMessage());
-                }
+    public void saveUser(@RequestBody User user, HttpSession session) throws MessagingException {
+        if (validatePassword(user.getPassword())) {
+            String salt = PasswordUtils.getSalt(30);
+            String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
+            user.setPassword(securedPassword);
+            user.setSalt(salt);
+            dao.addUser(user);
+            EmailController.sendEmail(user.getEmail(),user.getUsername());
+            session.setAttribute(LOGGED, user);
+        } else {
+            try {
+                throw new InvalidPasswordException();
+            } catch (InvalidPasswordException e) {
+                e.getMessage();
             }
         }
-        catch (NotLoggedException e){
-            System.out.println(e.getMessage());
-        }
-        //TODO pra6tane na email
-
     }
 
     @PostMapping(value="/updateUser")
@@ -85,7 +79,7 @@ public class UserController extends BaseController {
             dao.updateUserByID(user);
         }
         catch (NotLoggedException e){
-            System.out.println(e.getMessage());
+            e.getMessage();
         }
     }
 
@@ -109,7 +103,7 @@ public class UserController extends BaseController {
             dao.deleteUserByID(user.getUser_ID());
         }
         catch (NotLoggedException e){
-            System.out.println(e.getMessage());
+            e.getMessage();
         }
     }
 
