@@ -2,10 +2,12 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
-import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
-import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
+import ittalents_final_project.ninegag.utilities.exceptions.InvalidPasswordException;
+import ittalents_final_project.ninegag.utilities.exceptions.NotAdminException;
+import ittalents_final_project.ninegag.utilities.exceptions.NotLoggedException;
+import ittalents_final_project.ninegag.utilities.exceptions.WrongEmailOrPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -19,17 +21,21 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/login")
     public void login(@RequestBody User user, HttpSession session){
-        boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), dao.findUserByEmail(user.getEmail()).getPassword(), dao.findUserByEmail(user.getEmail()).getSalt());
-        if(passwordMatch) {
-            session.setAttribute(LOGGED, dao.findUserByEmail(user.getEmail()));
-            session.setMaxInactiveInterval(-1);
-        }
-        else{
-            try {
-                throw new WrongEmailOrPasswordException();
-            } catch (WrongEmailOrPasswordException e) {
-                System.out.println(e.getMessage());
+        try {
+            boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), dao.findUserByEmail(user.getEmail()).getPassword(), dao.findUserByEmail(user.getEmail()).getSalt());
+            if (passwordMatch) {
+                session.setAttribute(LOGGED, dao.findUserByEmail(user.getEmail()));
+                session.setMaxInactiveInterval(-1);
+            } else {
+                try {
+                    throw new WrongEmailOrPasswordException();
+                } catch (WrongEmailOrPasswordException e) {
+                    System.out.println(e.getMessage());
+                }
             }
+        }
+        catch (EmptyResultDataAccessException e){
+            System.out.println("Wrong username or password.");
         }
     }
 
@@ -76,10 +82,22 @@ public class UserController extends BaseController {
             validateLogged(session);
             User transferUser = (User) session.getAttribute(LOGGED);
             user.setUser_ID(transferUser.getUser_ID());
-            dao.updateUser(user);
+            dao.updateUserByID(user);
         }
         catch (NotLoggedException e){
             System.out.println(e.getMessage());
+        }
+    }
+
+    @PostMapping(value="/updateUserAdmin")
+    public void updateUserAdmin(@RequestBody User user, HttpSession session){
+        try {
+            validateAdmin(session);
+            dao.updateUserByEmail(user);
+        } catch (NotLoggedException e) {
+            e.printStackTrace();
+        } catch (NotAdminException e) {
+            e.printStackTrace();
         }
     }
 
@@ -88,12 +106,22 @@ public class UserController extends BaseController {
         try {
             validateLogged(session);
             User user = (User) session.getAttribute(LOGGED);
-            dao.deleteUser(user.getUser_ID());
+            dao.deleteUserByID(user.getUser_ID());
         }
         catch (NotLoggedException e){
             System.out.println(e.getMessage());
         }
     }
 
-
+    @PostMapping(value= "/deleteUserAdmin")
+    public void deleteUserAdmin(@RequestBody User user, HttpSession session){
+        try {
+            validateAdmin(session);
+            dao.deleteUserByEmail(user.getEmail());
+        } catch (NotLoggedException e) {
+            e.printStackTrace();
+        } catch (NotAdminException e) {
+            e.printStackTrace();
+        }
+    }
 }

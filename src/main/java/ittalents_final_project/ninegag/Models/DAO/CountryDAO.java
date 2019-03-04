@@ -10,4 +10,6 @@ public interface CountryDAO {
     public Country getById(int country_ID);
 
     public void addCountry(Country country);
+
+    public void deleteCountryByID(int country_ID);
 }

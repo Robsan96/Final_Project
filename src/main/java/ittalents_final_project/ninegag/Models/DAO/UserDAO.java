@@ -6,9 +6,13 @@ public interface UserDAO {
 
     public void addUser(User user);
 
-    public void updateUser(User user);
+    public void updateUserByID(User user);
 
-    public void deleteUser(long id);
+    public void updateUserByEmail(User user);
+
+    public void deleteUserByID(long id);
+
+    public void deleteUserByEmail(String email);
 
     public Object findUserByEmail(String email);
 

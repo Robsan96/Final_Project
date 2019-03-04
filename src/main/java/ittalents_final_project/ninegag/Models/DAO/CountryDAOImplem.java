@@ -60,6 +60,11 @@ public class CountryDAOImplem implements CountryDAO {
 
             return country;
         }
+    }
 
+    public void deleteCountryByID(int country_ID) {
+        String sql = "DELETE FROM countries WHERE country_ID = :country_ID";
+
+        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new Country(country_ID)));
     }
 }

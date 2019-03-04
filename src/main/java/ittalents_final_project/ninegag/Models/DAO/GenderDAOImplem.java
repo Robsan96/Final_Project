@@ -52,14 +52,17 @@ public class GenderDAOImplem implements GenderDAO {
     }
 
     private static final class GenderMapper implements RowMapper {
-
         public Gender mapRow(ResultSet rs, int rowNum) throws SQLException {
             Gender gender = new Gender();
             gender.setGender_ID(rs.getInt("gender_ID"));
             gender.setGender_Type(rs.getString("gender_Type"));
-
             return gender;
         }
+    }
 
+    public void deleteGenderByID(int gender_ID) {
+        String sql = "DELETE FROM genders WHERE gender_ID = :gender_ID";
+
+        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new Gender(gender_ID)));
     }
 }

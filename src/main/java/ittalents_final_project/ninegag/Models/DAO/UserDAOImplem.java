@@ -74,16 +74,28 @@ public class UserDAOImplem implements UserDAO {
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
-    public void updateUser(User user) {
+    public void updateUserByID(User user) {
         String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
-    public void deleteUser(long user_ID) {
+    public void updateUserByEmail(User user) {
+        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE email = :email";
+
+        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
+    }
+
+    public void deleteUserByID(long user_ID) {
         String sql = "DELETE FROM users WHERE user_ID = :user_ID";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new User(user_ID)));
+    }
+
+    public void deleteUserByEmail(String email) {
+        String sql = "DELETE FROM users WHERE email = :email";
+
+        namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new User(email)));
     }
 
     public User findUserByEmail(String email) {

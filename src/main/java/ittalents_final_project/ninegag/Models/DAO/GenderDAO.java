@@ -9,4 +9,6 @@ public interface GenderDAO {
     public Gender getById(int gender_ID);
 
     public void addGender(Gender gender);
+
+    public void deleteGenderByID(int gender_ID);
 }
