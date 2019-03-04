@@ -11,10 +11,11 @@ import lombok.Setter;
 @Setter
 public class Post {
 
+    private int postID;
+    private int profileID;
     private String title;
     private String contentURL;
-    private int profileID;
-    private int postID;
+    private int sectionID;
     private String creationDate;
     private boolean seeSensitive;
     private boolean atrributePoster;

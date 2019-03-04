@@ -34,11 +34,11 @@ public abstract class BaseController {
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({SQLException.class})
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMsg handleMySQL(Exception e) {
-        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
-    }
+//    @ExceptionHandler({SQLException.class})
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ErrorMsg handleMySQL(Exception e) {
+//        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+//    }
 
     @ExceptionHandler({AlreadyExistsException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
