@@ -1,5 +1,7 @@
 package ittalents_final_project.ninegag.Controllers;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,10 +13,16 @@ import java.util.Date;
 import java.util.Properties;
 
 @RestController
-public class EmailController extends BaseController{
+@Setter
+@Getter
+public class EmailController extends BaseController implements Runnable{
+
+
+    private String email;
+    private String name;
 
     @PostMapping(value="/sendEmail")
-    public static String sendEmail(String email, String name) throws MessagingException {
+    public String sendEmail(String email, String name) throws MessagingException {
 
         final String username = "FinalProjectITTnoReply@gmail.com";
         final String password = "A12345678@a";
@@ -25,7 +33,7 @@ public class EmailController extends BaseController{
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
 
-        Session session = Session.getInstance(props, new Authenticator() {
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(username, password);
             }
@@ -44,4 +52,12 @@ public class EmailController extends BaseController{
         return "Mail sent successfully.";
     }
 
+    @Override
+    public void run(){
+        try {
+            sendEmail(email,name);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -2,6 +2,7 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
+import ittalents_final_project.ninegag.utilities.PasswordUtils;
 import ittalents_final_project.ninegag.utilities.exceptions.InvalidPasswordException;
 import ittalents_final_project.ninegag.utilities.exceptions.NotAdminException;
 import ittalents_final_project.ninegag.utilities.exceptions.NotLoggedException;
@@ -59,7 +60,11 @@ public class UserController extends BaseController {
             user.setPassword(securedPassword);
             user.setSalt(salt);
             dao.addUser(user);
-            EmailController.sendEmail(user.getEmail(),user.getUsername());
+            EmailController email = new EmailController();
+            email.setEmail(user.getEmail());
+            email.setName(user.getUsername());
+            Thread thread = new Thread(email);
+            thread.start();
             session.setAttribute(LOGGED, user);
         } else {
             try {

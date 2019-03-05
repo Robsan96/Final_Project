@@ -1,7 +1,9 @@
-package ittalents_final_project.ninegag.Utils.Exceptions;
+package ittalents_final_project.ninegag.utilities.exceptions;
 
-public class EmptyParameterException extends GaGException {
+import ittalents_final_project.ninegag.utilities.exceptions.GagException;
+
+public class EmptyParameterException extends GagException{
     public EmptyParameterException(String message) {
-        super(message);
+        System.out.println("Posle");
     }
 }
