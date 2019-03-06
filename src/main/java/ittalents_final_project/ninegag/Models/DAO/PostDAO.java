@@ -115,7 +115,7 @@ public class PostDAO {
             List<ResponsePostDTO> posts = new ArrayList<>();
             List<Integer> postsId = jdbcTemplate.queryForList(sql, new Object[]{userId}, Integer.class);
             for (Integer i : postsId) {
-                posts.add(this.getBPostDTO(i));
+                posts.add(this.getBPostDTO(i,false));
             }
             return posts;
         } catch (EmptyResultDataAccessException e) {
