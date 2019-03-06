@@ -1,8 +1,5 @@
-package ittalents_final_project.ninegag.Utils.Exceptions;
+package ittalents_final_project.ninegag.utilities.exceptions;
 
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor
 public class NotLoggedException extends Exception {
 
     public NotLoggedException(String message) {
@@ -11,6 +8,6 @@ public class NotLoggedException extends Exception {
 
     @Override
     public String getMessage() {
-        return "you are not logged in.";
+        return "You are not logged in.";
     }
 }

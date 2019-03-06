@@ -1,14 +1,16 @@
 package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.POJO.User;
-import ittalents_final_project.ninegag.Utils.Exceptions.*;
+import ittalents_final_project.ninegag.utilities.ErrorMsg;
+import ittalents_final_project.ninegag.utilities.exceptions.*;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,16 +18,10 @@ import java.util.regex.Pattern;
 @RestController
 public abstract class BaseController {
 
-    @ExceptionHandler({NullPointerException.class})
+    @ExceptionHandler({MessagingException.class, NullPointerException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMsg handleEmptyResult(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
-    }
-
-    @ExceptionHandler({EmptyParameterException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMsg handleEmptyParamExeption(Exception e) {
-        return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({NotLoggedException.class, NotAdminException.class})
@@ -40,10 +36,22 @@ public abstract class BaseController {
 //        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
 
-    @ExceptionHandler({AlreadyExistsException.class})
+    @ExceptionHandler({AlreadyExistsException.class,EmptyParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMsg handleAlreadyExistsException(Exception e) {
+    public ErrorMsg handleAlreadyExistsExceptionAndEmptyParamException(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
+        return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({InvalidPasswordException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMsg handleInvalidPassword(Exception e) {
+        return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     protected static final String LOGGED = "logged";
@@ -56,7 +64,7 @@ public abstract class BaseController {
 
     protected boolean validateAdmin(HttpSession session) throws NotLoggedException, NotAdminException {
         if (session.getAttribute(LOGGED) == null) {
-            throw new NotLoggedException();
+            throw new NotLoggedException("Not Logged");
         } else {
             User user = (User) session.getAttribute(LOGGED);
             if (user.isAdmin_privileges()) {
@@ -74,8 +82,8 @@ public abstract class BaseController {
         session.setAttribute(LOGGED, null);
     }
 
-    protected boolean validatePassword(String password) {
-        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=])(?=\\S+$).{8,}$";
+    protected boolean validatePassword(String password){
+        String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=*()-_<>])(?=\\S+$).{8,}$";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(password);
         return matcher.matches();
