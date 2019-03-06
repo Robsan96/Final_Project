@@ -1,7 +1,11 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
+import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
+import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
+import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -15,6 +19,9 @@ import java.sql.SQLException;
 public class UserDAOImplem implements UserDAO {
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+    @Autowired
+    PostDAO dao;
+
 
     @Autowired
     public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
@@ -43,7 +50,7 @@ public class UserDAOImplem implements UserDAO {
         return parameterSource;
     }
 
-    private static final class ProfileMapper implements RowMapper {
+    private static final class UserMapper implements RowMapper {
 
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
             User user = new User();
@@ -86,7 +93,7 @@ public class UserDAOImplem implements UserDAO {
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
-    public void deleteUserByID(long user_ID) {
+    public void deleteUserByID(int user_ID) {
         String sql = "DELETE FROM users WHERE user_ID = :user_ID";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(new User(user_ID)));
@@ -101,12 +108,51 @@ public class UserDAOImplem implements UserDAO {
     public User findUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = :email";
 
-        return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new ProfileMapper());
+        return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new UserMapper());
     }
 
-    public Object findUserByID(long user_ID) {
+    public Object findUserByID(int user_ID) {
         String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
 
-        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new ProfileMapper());
+        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
+    }
+
+    public UserCommentsDTO getUserCommentedPosts(int user_ID){
+        try{
+            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            UserCommentsDTO userCommentedPosts = (UserCommentsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserCommentsDTO(user_ID)), new UserMapper());
+            userCommentedPosts.setCommentedPosts(dao.getAllPostsCommentedBy(userCommentedPosts.getUser_ID()));
+            return userCommentedPosts;
+        }
+        catch (
+                EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public UserPostsDTO getUserPosts(int user_ID){
+        try{
+            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            UserPostsDTO userPosts = (UserPostsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserPostsDTO(user_ID)), new UserMapper());
+            userPosts.setUploadedPosts(dao.getAllPostsMadeBy(userPosts.getUser_ID()));
+            return userPosts;
+        }
+        catch (
+                EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public UserUpvotesDTO getUserUpvotedPosts(int user_ID){
+        try{
+            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            UserUpvotesDTO userUpvotes = (UserUpvotesDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserUpvotesDTO(user_ID)), new UserMapper());
+            userUpvotes.setLikedPosts(dao.getAllPostsVotedBy(userUpvotes.getUser_ID()));
+            return userUpvotes;
+        }
+        catch (
+                EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 }

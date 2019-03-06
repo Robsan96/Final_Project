@@ -109,6 +109,20 @@ public class PostDAO {
         }
     }
 
+    public List<ResponsePostDTO> getAllPostsMadeBy(int userId) {
+        try {
+            String sql = "SELECT post_ID FROM posts WHERE profile_ID=?";
+            List<ResponsePostDTO> posts = new ArrayList<>();
+            List<Integer> postsId = jdbcTemplate.queryForList(sql, new Object[]{userId}, Integer.class);
+            for (Integer i : postsId) {
+                posts.add(this.getBPostDTO(i));
+            }
+            return posts;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
     public List<ResponsePostDTO> getAllPostsVotedBy(int userId) {
         try {
             String sql = "SELECT post_ID FROM post_likes WHERE profile_ID=? ORDER BY date_time_created DESC";
