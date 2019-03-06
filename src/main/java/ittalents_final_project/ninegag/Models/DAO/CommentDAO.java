@@ -1,5 +1,6 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
+import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -8,6 +9,7 @@ import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,8 +18,9 @@ import java.util.List;
 public class CommentDAO {
     @Autowired
     JdbcTemplate jdbcTemplate;
-    private static final String SELECT_COMMENT = "SELECT comment_ID , content,post_ID,profile_ID,reply_of_ID,date_time_created " +
-            "FROM comments ";
+    private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID,c.reply_of_ID," +
+            "c.date_time_created,u.username AS ownerName,u.avatar AS ownerAvatar " +
+            "FROM comments c JOIN users u ON(c.profile_ID=u.user_ID) ";
 
     public int addComment(Comment comment) {
         String sql = "INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)";
@@ -39,35 +42,55 @@ public class CommentDAO {
 
     @Transactional
     public int deleteComment(Comment comment) {
-        try {
-            List<Comment> coments = this.getAllByComment(comment);
-            for (Comment coment1 : coments) {
-                deleteComment(coment1);
-            }
-            jdbcTemplate.update("DELETE FROM comments_likes WHERE comment_id=?", new Object[]{comment.getId()});
-            jdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID=?", new Object[]{comment.getId()});
-            jdbcTemplate.update("DELETE FROM comments WHERE comment_ID=?", new Object[]{comment.getId()});
-            return 1;
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return 0;
+        List<Comment> coments = this.getAllByComment(comment);
+        for (Comment coment1 : coments) {
+            deleteComment(coment1);
         }
+        jdbcTemplate.update("DELETE FROM comments_likes WHERE comment_id=?", new Object[]{comment.getId()});
+        jdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID=?", new Object[]{comment.getId()});
+        jdbcTemplate.update("DELETE FROM comments WHERE comment_ID=?", new Object[]{comment.getId()});
+        return comment.getId();
     }
 
-    public List<Comment> getAllByPost(Post post) {
+    public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
         try {
-            String sql = SELECT_COMMENT + "WHERE post_ID=?";
-            List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRow(resultSet));
+            String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
+            List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
+                    (resultSet, i) -> mapRowR(resultSet));
             return comments;
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
-    public List<Comment> getAllByComment(Comment comment) {
-        String sql = SELECT_COMMENT + "WHERE reply_of_ID=?";
-        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRow(resultSet));
-        return comments;
+    public List<Comment> getAllByPost(Post post) {
+        try {
+            String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
+            List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRowR(resultSet));
+            return comments;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
+        try {
+            String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
+            List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
+            return comments;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    private List<Comment> getAllByComment(Comment comment) {
+        try {
+            String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
+            List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
+            return comments;
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
     }
 
     public int voteComment(long userId, int commentId, boolean vote) {
@@ -104,5 +127,16 @@ public class CommentDAO {
                 rs.getInt("profile_ID"),
                 rs.getInt("reply_of_ID"),
                 rs.getString("date_time_created"));
+    }
+
+    private ResponseCommentDTO mapRowR(ResultSet rs) throws SQLException {
+        return new ResponseCommentDTO(rs.getInt("comment_ID"),
+                rs.getString("content"),
+                rs.getInt("post_ID"),
+                rs.getInt("profile_ID"),
+                rs.getInt("reply_of_ID"),
+                rs.getString("date_time_created"),
+                rs.getString("ownerName"),
+                rs.getString("ownerAvatar"));
     }
 }

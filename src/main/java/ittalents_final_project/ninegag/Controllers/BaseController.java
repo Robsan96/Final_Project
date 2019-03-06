@@ -22,7 +22,7 @@ public abstract class BaseController {
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({EmptyParameterException.class})
+    @ExceptionHandler({EmptyParameterException.class,BadParamException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
@@ -33,6 +33,8 @@ public abstract class BaseController {
     public ErrorMsg handleLoggingOrAdminStatus(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
+
+
 //
 //    @ExceptionHandler({SQLException.class})
 //    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -54,7 +56,7 @@ public abstract class BaseController {
         }
     }
 
-    protected boolean validateAdmin(HttpSession session) throws NotLoggedException, NotAdminException {
+    protected boolean validateAdmin(HttpSession session) throws NotLoggedException{
         if (session.getAttribute(LOGGED) == null) {
             throw new NotLoggedException();
         } else {
@@ -63,15 +65,6 @@ public abstract class BaseController {
                 return true;
             } else return false;
         }
-    }
-
-    protected void logInUser(User user, HttpSession session) {
-        session.setMaxInactiveInterval(-1);
-        session.setAttribute(LOGGED, user);
-    }
-
-    protected void logOutUser(HttpSession session) {
-        session.setAttribute(LOGGED, null);
     }
 
     protected boolean validatePassword(String password) {

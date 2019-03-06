@@ -21,7 +21,7 @@ public class ResponsePostDTO extends Post {
 
     private int commentsCounter;
     private int votePoints;
-    private List<Comment> allComments;
+    private List<ResponseCommentDTO> allComments;
 
     public ResponsePostDTO(int postID, int profileID, String title, String contentURL, int sectionID,
                            String creationDate, boolean seeSensitive, boolean atrributePoster,

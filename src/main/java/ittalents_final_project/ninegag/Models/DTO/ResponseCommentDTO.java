@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 public class ResponseCommentDTO extends Comment {
 
     private String ownerName;
-    private String owenrAvatar;
+    private String ownerAvatar;
 
     public ResponseCommentDTO(int id, String content, int post, int profile, int reply, String creationDate,
-                              String ownerName, String owenrAvatar) {
+                              String ownerName, String ownerAvatar) {
         super(id, content, post, profile, reply, creationDate);
         this.ownerName = ownerName;
-        this.owenrAvatar = owenrAvatar;
+        this.ownerAvatar = ownerAvatar;
     }
 }
