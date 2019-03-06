@@ -3,7 +3,6 @@ package ittalents_final_project.ninegag.Controllers;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotAdminException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
 import ittalents_final_project.ninegag.Utils.PasswordUtils;
@@ -22,36 +21,26 @@ public class UserController extends BaseController {
     UserDAOImplem dao;
 
     @PostMapping(value = "/login")
-    public void login(@RequestBody User user, HttpSession session) {
-        try {
-            boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), dao.findUserByEmail(user.getEmail()).getPassword(), dao.findUserByEmail(user.getEmail()).getSalt());
-            if (passwordMatch) {
-                session.setAttribute(LOGGED, dao.findUserByEmail(user.getEmail()));
-                session.setMaxInactiveInterval(-1);
-            } else {
-                try {
-                    throw new WrongEmailOrPasswordException();
-                } catch (WrongEmailOrPasswordException e) {
-                    e.getMessage();
-                }
-            }
-        } catch (EmptyResultDataAccessException e) {
-            e.getMessage();
+
+    public void login(@RequestBody User user, HttpSession session) throws WrongEmailOrPasswordException, EmptyResultDataAccessException {
+        boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), dao.findUserByEmail(user.getEmail()).getPassword(), dao.findUserByEmail(user.getEmail()).getSalt());
+        if (passwordMatch) {
+            session.setAttribute(LOGGED, dao.findUserByEmail(user.getEmail()));
+            session.setMaxInactiveInterval(-1);
+        } else {
+            throw new WrongEmailOrPasswordException();
         }
     }
 
     @PostMapping(value = "/logout")
-    public void logOut(HttpSession session) {
-        try {
-            validateLogged(session);
-            session.setAttribute(LOGGED, null);
-        } catch (NotLoggedException e) {
-            e.getMessage();
-        }
+
+    public void logOut(HttpSession session) throws NotLoggedException {
+        validateLogged(session);
+        session.setAttribute(LOGGED, null);
     }
 
     @PostMapping(value = "/register")
-    public void saveUser(@RequestBody User user, HttpSession session) throws MessagingException {
+    public void saveUser(@RequestBody User user, HttpSession session) throws MessagingException, InvalidPasswordException {
         if (validatePassword(user.getPassword())) {
             String salt = PasswordUtils.getSalt(30);
             String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
@@ -65,60 +54,34 @@ public class UserController extends BaseController {
             thread.start();
             session.setAttribute(LOGGED, user);
         } else {
-            try {
-                throw new InvalidPasswordException();
-            } catch (InvalidPasswordException e) {
-                e.getMessage();
-            }
+            throw new InvalidPasswordException();
         }
     }
 
     @PostMapping(value = "/updateUser")
-    public void updateUser(@RequestBody User user, HttpSession session) {
-        try {
-            validateLogged(session);
-            User transferUser = (User) session.getAttribute(LOGGED);
-            user.setUser_ID(transferUser.getUser_ID());
-            dao.updateUserByID(user);
-        } catch (NotLoggedException e) {
-            e.getMessage();
-        }
+    public void updateUser(@RequestBody User user, HttpSession session) throws NotLoggedException {
+        validateLogged(session);
+        User transferUser = (User) session.getAttribute(LOGGED);
+        user.setUser_ID(transferUser.getUser_ID());
+        dao.updateUserByID(user);
     }
 
     @PostMapping(value = "/updateUserAdmin")
-    public void updateUserAdmin(@RequestBody User user, HttpSession session) throws NotAdminException {
-        try {
-            if (validateAdmin(session)) {
-                dao.updateUserByEmail(user);
-            } else {
-                throw new NotAdminException();
-            }
-        } catch (NotLoggedException e) {
-            e.printStackTrace();
-        }
+    public void updateUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
+        validateAdmin(session);
+        dao.updateUserByEmail(user);
     }
 
-    @PostMapping(value = "/deleteUser")
-    public void deleteUser(HttpSession session) {
-        try {
-            validateLogged(session);
-            User user = (User) session.getAttribute(LOGGED);
-            dao.deleteUserByID(user.getUser_ID());
-        } catch (NotLoggedException e) {
-            e.getMessage();
-        }
+    @DeleteMapping(value = "/deleteUser")
+    public void deleteUser(HttpSession session) throws NotLoggedException {
+        validateLogged(session);
+        User user = (User) session.getAttribute(LOGGED);
+        dao.deleteUserByID(user.getUser_ID());
     }
 
-    @PostMapping(value = "/deleteUserAdmin")
-    public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotAdminException {
-        try {
-            if (validateAdmin(session)) {
-                dao.deleteUserByEmail(user.getEmail());
-            } else {
-                throw new NotAdminException();
-            }
-        } catch (NotLoggedException e) {
-            e.printStackTrace();
-        }
+    @DeleteMapping(value = "/deleteUserAdmin")
+    public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
+        validateAdmin(session);
+        dao.deleteUserByEmail(user.getEmail());
     }
 }
