@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User {
 
-    private long user_ID;
+    private int user_ID;
     private String email;
     private String username;
     private String password;
@@ -30,7 +30,7 @@ public class User {
     private boolean admin_privileges;
 
 
-    public User(long user_ID) {
+    public User(int user_ID) {
         this.user_ID = user_ID;
     }
 
