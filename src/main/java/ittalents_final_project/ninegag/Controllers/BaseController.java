@@ -19,7 +19,7 @@ public abstract class BaseController {
     @ExceptionHandler({NullPointerException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMsg handleEmptyResult(Exception e) {
-        return new ErrorMsg(e.getMessage(),HttpStatus.NOT_FOUND.value(),LocalDateTime.now());
+        return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({EmptyParameterException.class})
@@ -33,7 +33,7 @@ public abstract class BaseController {
     public ErrorMsg handleLoggingOrAdminStatus(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
-
+//
 //    @ExceptionHandler({SQLException.class})
 //    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 //    public ErrorMsg handleMySQL(Exception e) {
@@ -54,14 +54,14 @@ public abstract class BaseController {
         }
     }
 
-    protected void validateAdmin(HttpSession session) throws NotLoggedException, NotAdminException {
+    protected boolean validateAdmin(HttpSession session) throws NotLoggedException, NotAdminException {
         if (session.getAttribute(LOGGED) == null) {
             throw new NotLoggedException();
         } else {
             User user = (User) session.getAttribute(LOGGED);
-            if (!user.isAdmin_privileges()) {
-                throw new NotAdminException();
-            }
+            if (user.isAdmin_privileges()) {
+                return true;
+            } else return false;
         }
     }
 

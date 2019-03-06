@@ -39,7 +39,7 @@ public class FileController extends BaseController {
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
             fos.write(bytes);
             user.setAvatar(newFile.getName());
-            daoU.updateUser(user);
+            daoU.updateUserByID(user);
 
         } catch (IOException e) {
             System.out.println("Error in uploading avatar!");

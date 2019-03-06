@@ -14,5 +14,15 @@ import java.util.List;
 @RequestMapping(value = "/posts")
 public class PostController extends BaseController {
 
-    
+    @Autowired
+    PostDAO dao;
+
+    @GetMapping(value = "/{id}")
+    public ResponsePostDTO getPostById(@PathVariable(value = "id") int id) {
+        ResponsePostDTO post=dao.getBPostDTO(id);
+        if(post==null){
+            throw new NullPointerException("Post with that id does not exist!");
+        }
+        return post;
+    }
 }

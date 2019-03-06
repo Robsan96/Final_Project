@@ -16,7 +16,12 @@ import java.util.List;
 @Component
 public class PostDAO {
 
-    public static final String SQL = "SELECT  post_ID, title, content_URL, profile_ID, section_ID, date_time_created, seeSensitive, attribute_poster, (SELECT COUNT(*) FROM comments WHERE post_ID= ?)AS comments, (SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=1 -(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=0))AS votes FROM posts";
+    public static final String SQL = "SELECT  post_ID, title, content_URL, profile_ID, s.section_ID, " +
+            "date_time_created, seeSensitive, attribute_poster, (SELECT COUNT(*)" +
+            " FROM comments  WHERE post_ID= ?)AS comments, " +
+            "(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=1" +
+            " -(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=0))AS votes " +
+            "FROM posts JOIN sections s ON (posts.section_ID=s.section_ID)";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -25,7 +30,7 @@ public class PostDAO {
 
     public Post getPostById(int Id) {
         try {
-            String sql = "SELECT post_ID, title, content_URL, profile_ID, section_ID, " +
+            String sql = "SELECT post_ID, title, content_URL, profile_ID, s.section_ID, " +
                     "date_time_created, seeSensitive, attribute_poster FROM posts WHERE post_ID=?";
             return jdbcTemplate.queryForObject(sql, new Object[]{Id}, ((resultSet, i) -> mapRow(resultSet)));
         } catch (EmptyResultDataAccessException e) {
