@@ -6,6 +6,7 @@ import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException
 import ittalents_final_project.ninegag.Utils.Exceptions.NotAdminException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
+import ittalents_final_project.ninegag.Utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,11 @@ public class UserController extends BaseController {
             user.setPassword(securedPassword);
             user.setSalt(salt);
             dao.addUser(user);
-            EmailController.sendEmail(user.getEmail(),user.getUsername());
+            EmailController email = new EmailController();
+            email.setEmail(user.getEmail());
+            email.setName(user.getUsername());
+            Thread thread = new Thread(email);
+            thread.start();
             session.setAttribute(LOGGED, user);
         } else {
             try {

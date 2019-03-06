@@ -1,7 +1,6 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.PostDAO;
-import ittalents_final_project.ninegag.Models.DAO.UserDAO;
+import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -18,11 +17,10 @@ import java.util.Base64;
 public class FileController extends BaseController {
 
     @Autowired
-    UserDAO daoU;
-    @Autowired
-    PostDAO daoP;
+    UserDAOImplem dao;
 
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
+
+    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
     @PostMapping(value = "/profiles")
@@ -39,15 +37,15 @@ public class FileController extends BaseController {
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
             fos.write(bytes);
             user.setAvatar(newFile.getName());
-            daoU.updateUserByID(user);
+
+            dao.updateUserByID(user);
 
         } catch (IOException e) {
             System.out.println("Error in uploading avatar!");
         }
-
     }
 
-    //TODO Made POsts and then check this out !
+    //TODO Make Posts and then check this out !
 //    @PostMapping(value = "posts")
 //    public void upploadImageToPost(@RequestParam("URL") String url,
 //                                   @RequestParam("postId") int postId,
