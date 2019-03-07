@@ -85,7 +85,7 @@ public class UserController extends BaseController {
         dao.deleteUserByEmail(user.getEmail());
     }
 
-@GetMapping(value="/user/posts{id}")
+@GetMapping(value="/user/posts/{id}")
     public UserPostsDTO getUserPosts(@PathVariable(value = "id") int user_ID){
         UserPostsDTO userPosts = dao.getUserPosts(user_ID);
         if(userPosts==null){
@@ -94,7 +94,7 @@ public class UserController extends BaseController {
         return userPosts;
     }
 
-    @GetMapping(value="/user/comments{id}")
+    @GetMapping(value="/user/comments/{id}")
     public UserCommentsDTO getUserCommentedPosts(@PathVariable(value = "id") int user_ID){
         UserCommentsDTO userCommentedPosts = dao.getUserCommentedPosts(user_ID);
         if(userCommentedPosts==null){
@@ -103,7 +103,7 @@ public class UserController extends BaseController {
         return userCommentedPosts;
     }
 
-    @GetMapping(value="/user/upvotes{id}")
+    @GetMapping(value="/user/upvotes/{id}")
     public UserUpvotesDTO getUserUpvotedPosts(@PathVariable(value = "id") int user_ID){
         UserUpvotesDTO userUpvotedPosts = dao.getUserUpvotedPosts(user_ID);
         if(userUpvotedPosts==null){
