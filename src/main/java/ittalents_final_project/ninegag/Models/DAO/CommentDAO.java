@@ -4,8 +4,6 @@ import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
@@ -73,10 +71,11 @@ public class CommentDAO {
 
     public List<Comment> getAllByPost(Post post) {
         String sql = "SELECT * FROM comments WHERE post_ID=? ";
-        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRowR(resultSet));
+        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
+                                                   (resultSet, i) -> mapRowR(resultSet));
         return comments;
     }
-    
+
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
         String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));

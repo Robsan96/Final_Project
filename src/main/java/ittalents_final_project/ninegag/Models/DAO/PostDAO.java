@@ -118,7 +118,7 @@ public class PostDAO {
             return null;
         }
     }
-
+    
     public List<ResponsePostDTO> getAllPostsVotedBy(int userId) {
         String sql = SQL + " JOIN post_likes l ON (p.post_ID=l.post_id) WHERE l.profile_id=? ORDER BY votes DESC";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
@@ -149,7 +149,7 @@ public class PostDAO {
             jdbcTemplate.update("DELETE FROM posts WHERE post_id=?", new Object[]{post.getPostID()});
             return post.getPostID();
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
         }
         return 0;
     }

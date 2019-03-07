@@ -75,6 +75,78 @@ public class UserDAOImplem implements UserDAO {
 
     }
 
+    private static final class UserPostDTOMapper implements RowMapper {
+
+        public UserPostsDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            UserPostsDTO userPostsDTO = new UserPostsDTO();
+            userPostsDTO.setUser_ID(rs.getInt("user_ID"));
+            userPostsDTO.setEmail(rs.getString("email"));
+            userPostsDTO.setUsername(rs.getString("username"));
+            userPostsDTO.setPassword(rs.getString("password"));
+            userPostsDTO.setSalt(rs.getString("salt"));
+            userPostsDTO.setFull_name(rs.getString("full_name"));
+            userPostsDTO.setBirthday(rs.getDate("birthday"));
+            userPostsDTO.setGender_ID(rs.getInt("gender_ID"));
+            userPostsDTO.setCountry_ID(rs.getInt("country_ID"));
+            userPostsDTO.setDescription(rs.getString("description"));
+            userPostsDTO.setFacebook_account(rs.getString("facebook_account"));
+            userPostsDTO.setGoogle_account(rs.getString("google_account"));
+            userPostsDTO.setAvatar(rs.getString("avatar"));
+            userPostsDTO.setSensitive_filter(rs.getBoolean("sensitive_filter"));
+            userPostsDTO.setAdmin_privileges(rs.getBoolean("admin_privileges"));
+
+            return userPostsDTO;
+        }
+    }
+
+    private static final class UserUpvotesDTOMapper implements RowMapper {
+
+        public UserUpvotesDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            UserUpvotesDTO userUpvotesDTO = new UserUpvotesDTO();
+            userUpvotesDTO.setUser_ID(rs.getInt("user_ID"));
+            userUpvotesDTO.setEmail(rs.getString("email"));
+            userUpvotesDTO.setUsername(rs.getString("username"));
+            userUpvotesDTO.setPassword(rs.getString("password"));
+            userUpvotesDTO.setSalt(rs.getString("salt"));
+            userUpvotesDTO.setFull_name(rs.getString("full_name"));
+            userUpvotesDTO.setBirthday(rs.getDate("birthday"));
+            userUpvotesDTO.setGender_ID(rs.getInt("gender_ID"));
+            userUpvotesDTO.setCountry_ID(rs.getInt("country_ID"));
+            userUpvotesDTO.setDescription(rs.getString("description"));
+            userUpvotesDTO.setFacebook_account(rs.getString("facebook_account"));
+            userUpvotesDTO.setGoogle_account(rs.getString("google_account"));
+            userUpvotesDTO.setAvatar(rs.getString("avatar"));
+            userUpvotesDTO.setSensitive_filter(rs.getBoolean("sensitive_filter"));
+            userUpvotesDTO.setAdmin_privileges(rs.getBoolean("admin_privileges"));
+
+            return userUpvotesDTO;
+        }
+    }
+
+    private static final class UserCommentsDTOMapper implements RowMapper {
+
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            UserCommentsDTO userCommentsDTO = new UserCommentsDTO();
+            userCommentsDTO.setUser_ID(rs.getInt("user_ID"));
+            userCommentsDTO.setEmail(rs.getString("email"));
+            userCommentsDTO.setUsername(rs.getString("username"));
+            userCommentsDTO.setPassword(rs.getString("password"));
+            userCommentsDTO.setSalt(rs.getString("salt"));
+            userCommentsDTO.setFull_name(rs.getString("full_name"));
+            userCommentsDTO.setBirthday(rs.getDate("birthday"));
+            userCommentsDTO.setGender_ID(rs.getInt("gender_ID"));
+            userCommentsDTO.setCountry_ID(rs.getInt("country_ID"));
+            userCommentsDTO.setDescription(rs.getString("description"));
+            userCommentsDTO.setFacebook_account(rs.getString("facebook_account"));
+            userCommentsDTO.setGoogle_account(rs.getString("google_account"));
+            userCommentsDTO.setAvatar(rs.getString("avatar"));
+            userCommentsDTO.setSensitive_filter(rs.getBoolean("sensitive_filter"));
+            userCommentsDTO.setAdmin_privileges(rs.getBoolean("admin_privileges"));
+
+            return userCommentsDTO;
+        }
+    }
+
     public void addUser(User user) {
         String sql = "INSERT INTO users(email,username,password,salt) VALUES(:email, :username, :password, :salt)";
 
@@ -120,12 +192,12 @@ public class UserDAOImplem implements UserDAO {
     public UserCommentsDTO getUserCommentedPosts(int user_ID){
         try{
             String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
-            UserCommentsDTO userCommentedPosts = (UserCommentsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserCommentsDTO(user_ID)), new UserMapper());
+            UserCommentsDTO userCommentedPosts = (UserCommentsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserCommentsDTO(user_ID)), new UserCommentsDTOMapper());
             userCommentedPosts.setCommentedPosts(dao.getAllPostsCommentedBy(userCommentedPosts.getUser_ID()));
             return userCommentedPosts;
         }
         catch (
-                EmptyResultDataAccessException e) {
+            EmptyResultDataAccessException e) {
             return null;
         }
     }
@@ -133,8 +205,8 @@ public class UserDAOImplem implements UserDAO {
     public UserPostsDTO getUserPosts(int user_ID){
         try{
             String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
-            UserPostsDTO userPosts = (UserPostsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserPostsDTO(user_ID)), new UserMapper());
-            userPosts.setUploadedPosts(dao.getAllPostsMadeBy(userPosts.getUser_ID()));
+            UserPostsDTO userPosts = (UserPostsDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserPostsDTO(user_ID)), new UserPostDTOMapper());
+            userPosts.setUploadedPosts(dao.getAllPostsByUser(userPosts.getUser_ID()));
             return userPosts;
         }
         catch (
@@ -146,7 +218,7 @@ public class UserDAOImplem implements UserDAO {
     public UserUpvotesDTO getUserUpvotedPosts(int user_ID){
         try{
             String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
-            UserUpvotesDTO userUpvotes = (UserUpvotesDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserUpvotesDTO(user_ID)), new UserMapper());
+            UserUpvotesDTO userUpvotes = (UserUpvotesDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserUpvotesDTO(user_ID)), new UserUpvotesDTOMapper());
             userUpvotes.setLikedPosts(dao.getAllPostsVotedBy(userUpvotes.getUser_ID()));
             return userUpvotes;
         }
