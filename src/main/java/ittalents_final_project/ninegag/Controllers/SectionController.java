@@ -40,7 +40,7 @@ public class SectionController extends BaseController {
                 return section;
             }
         } else {
-            throw new PermitionDeniedException("You dont have acces to that option");
+            throw new PermitionDeniedException("You dont have access to that option");
         }
     }
 
@@ -54,7 +54,7 @@ public class SectionController extends BaseController {
                 return section;
             }
         } else {
-            throw new PermitionDeniedException("You dont have acces to that option");
+            throw new PermitionDeniedException("You dont have access to that option");
         }
     }
 

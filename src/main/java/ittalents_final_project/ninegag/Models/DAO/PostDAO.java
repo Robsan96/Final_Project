@@ -7,36 +7,26 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class PostDAO {
 
-<<<<<<< HEAD
     static Logger log = Logger.getLogger(PostDAO.class.getName());
 
-    public static final String SQL = "SELECT  post_ID, title, content_URL, profile_ID, s.section_ID, " +
-            "date_time_created, seeSensitive, attribute_poster, (SELECT COUNT(*)" +
-            " FROM comments  WHERE post_ID= ?)AS comments, " +
-            "(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=1" +
-            " -(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=0))AS votes " +
-=======
     public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID, " +
-            "p.date_time_created, p.seeSensitive, p.attribute_poster, (SELECT COUNT(*)" +
+            "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
             "FROM comments  WHERE post_ID=p.post_ID )AS comments," +
             "(SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
             "FROM post_likes WHERE post_id=p.post_ID AND status=1)AS votes " +
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             "FROM posts p JOIN sections s ON (p.section_ID=s.section_ID)";
     @Autowired
+
     JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -104,7 +94,7 @@ public class PostDAO {
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         try {
             String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID," +
-                    "     p.date_time_created, p.seeSensitive, p.attribute_poster, (SELECT COUNT(*)" +
+                    "     p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
                     "     FROM comments  WHERE post_ID=p.post_ID )AS comments," +
                     "     (SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
                     "      FROM post_likes WHERE post_id=p.post_ID AND status=1)AS votes " +
@@ -140,18 +130,14 @@ public class PostDAO {
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         if (posts.size() > 0) {
             return posts;
-<<<<<<< HEAD
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-=======
         } else {
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
+            log.error("Empty list in get allposts ");
             return null;
         }
     }
 
     public int addPost(Post post) {
-        String sql = "INSERT INTO posts(title,content_URL,profile_ID,section_ID,seeSensitive,attribute_poster)" +
+        String sql = "INSERT INTO posts(title,content_URL,profile_ID,section_ID,see_sensitive,attribute_poster)" +
                 "VALUES(?,?,?,?,?,?)";
         return jdbcTemplate.update(sql, new Object[]{post.getTitle(), post.getContentURL(), post.getProfileID(),
                 post.getSectionID(), post.isSeeSensitive(), post.isAtrributePoster()});
@@ -192,7 +178,7 @@ public class PostDAO {
         return new ResponsePostDTO(rs.getInt("post_ID"), rs.getInt("profile_ID"),
                 rs.getString("title"), rs.getString("content_URL"),
                 rs.getInt("section_ID"), rs.getString("date_time_created"),
-                rs.getBoolean("seeSensitive"), rs.getBoolean("attribute_poster"),
+                rs.getBoolean("see_sensitive"), rs.getBoolean("attribute_poster"),
                 rs.getInt("comments"), rs.getInt("votes"));
     }
 
@@ -200,6 +186,6 @@ public class PostDAO {
         return new Post(rs.getInt("post_ID"), rs.getInt("profile_ID"),
                 rs.getString("title"), rs.getString("content_URL"),
                 rs.getInt("section_ID"), rs.getString("date_time_created"),
-                rs.getBoolean("seeSensitive"), rs.getBoolean("attribute_poster"));
+                rs.getBoolean("see_sensitive"), rs.getBoolean("attribute_poster"));
     }
 }

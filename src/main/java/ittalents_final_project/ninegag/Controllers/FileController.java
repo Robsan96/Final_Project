@@ -24,14 +24,11 @@ public class FileController extends BaseController {
 @Autowired
     PostDAO daoP;
 
-<<<<<<< HEAD
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
     private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
-=======
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
+
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
     @PostMapping(value = "/images/profiles")
@@ -40,13 +37,14 @@ public class FileController extends BaseController {
         if (url.isEmpty() || url == null) {
             throw new NullPointerException("URL is not valid or empty!");
         }
-        String base64 = url;
+        byte[] base64 = url.getBytes();
         User user = (User) session.getAttribute(LOGGED);
-        byte[] bytes = Base64.getDecoder().decode(base64);
+        String encoded = Base64.getEncoder().encodeToString(base64);
+        base64=Base64.getDecoder().decode(encoded);
         String fileName = user.getEmail() + FILE_NAME;
         File newFile = new File(FILE_PATH + fileName);
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
-            fos.write(bytes);
+            fos.write(base64);
             user.setAvatar(newFile.getName());
 
             daoU.updateUserByID(user);
@@ -81,7 +79,7 @@ public class FileController extends BaseController {
 
     @GetMapping(value = "/images/{name}", produces = "image/png")
     public byte[] downloadImage(@PathVariable(value = "name") String imageName) throws Exception {
-        File newFile = new File(FILE_PATH + imageName);
+        File newFile = new File(FILE_PATH + imageName+".jpg");
         if (!newFile.exists()) {
             throw new EmptyParameterException("Oop file with that name does not exist !");
         }

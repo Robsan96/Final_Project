@@ -69,32 +69,18 @@ public class CommentDAO {
                 (resultSet, i) -> mapRowR(resultSet));
         if (comments.size() > 0) {
             return comments;
-<<<<<<< HEAD
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-=======
+
         } else {
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }
 
     public List<Comment> getAllByPost(Post post) {
-<<<<<<< HEAD
-        try {
-            String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
-            List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRowR(resultSet));
-            return comments;
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-            return null;
-        }
-=======
+
         String sql = "SELECT * FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
                                                    (resultSet, i) -> mapRowR(resultSet));
         return comments;
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
     }
 
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
@@ -102,12 +88,7 @@ public class CommentDAO {
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
         if (comments.size() > 0) {
             return comments;
-<<<<<<< HEAD
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-=======
         } else {
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }
@@ -118,12 +99,7 @@ public class CommentDAO {
                 (resultSet, i) -> mapRowR(resultSet));
         if (comments.size() > 0) {
             return comments;
-<<<<<<< HEAD
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-=======
         } else {
->>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }

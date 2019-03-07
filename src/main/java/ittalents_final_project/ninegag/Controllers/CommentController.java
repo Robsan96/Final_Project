@@ -27,7 +27,7 @@ public class CommentController extends BaseController {
             throws NotLoggedException, EmptyParameterException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
-        comment.setProfile((int) user.getUser_ID());
+        comment.setProfile(user.getUser_ID());
         if (comment.getContent() == null || comment.getContent().length() == 0) {
             throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
         }

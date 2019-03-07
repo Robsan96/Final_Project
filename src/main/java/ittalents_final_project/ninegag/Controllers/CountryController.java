@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CountryController {
+public class CountryController extends BaseController{
 
     @Autowired
     CountryDAOImplem dao;

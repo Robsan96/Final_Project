@@ -7,6 +7,7 @@ import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
+import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
 import ittalents_final_project.ninegag.Utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,17 +71,19 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/updateUserAdmin")
-    public void updateUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
-        validateAdmin(session);
-        dao.updateUserByEmail(user);
+    public void updateUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException, PermitionDeniedException {
+        if (validateAdmin(session)) {
+            dao.updateUserByEmail(user);
+        } else {
+            throw new PermitionDeniedException("You are not admin");
+        }
     }
-
-    @DeleteMapping(value = "/deleteUser")
-    public void deleteUser(HttpSession session) throws NotLoggedException {
-        validateLogged(session);
-        User user = (User) session.getAttribute(LOGGED);
-        dao.deleteUserByID(user.getUser_ID());
-    }
+        @DeleteMapping(value = "/deleteUser")
+        public void deleteUser (HttpSession session) throws NotLoggedException {
+            validateLogged(session);
+            User user = (User) session.getAttribute(LOGGED);
+            dao.deleteUserByID(user.getUser_ID());
+        }
 
     @DeleteMapping(value = "/deleteUserAdmin")
     public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
