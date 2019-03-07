@@ -2,6 +2,7 @@ package ittalents_final_project.ninegag.Controllers;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +18,7 @@ import java.util.Properties;
 @Getter
 public class EmailController extends BaseController implements Runnable{
 
+    static Logger log = Logger.getLogger(EmailController.class.getName());
 
     private String email;
     private String name;
@@ -57,7 +59,8 @@ public class EmailController extends BaseController implements Runnable{
         try {
             sendEmail(email,name);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
+            e.getMessage();
         }
     }
 }

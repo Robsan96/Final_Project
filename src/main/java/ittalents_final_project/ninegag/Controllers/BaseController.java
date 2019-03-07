@@ -2,6 +2,7 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.*;
+import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,21 +18,26 @@ import java.util.regex.Pattern;
 @RestController
 public abstract class BaseController {
 
+static Logger log = Logger.getLogger(BaseController.class.getName());
+
     @ExceptionHandler({MessagingException.class, NullPointerException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMsg handleEmptyResult(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({EmptyParameterException.class, BadParamException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({NotLoggedException.class, NotAdminException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingOrAdminStatus(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
@@ -40,24 +46,28 @@ public abstract class BaseController {
 //    @ExceptionHandler({SQLException.class})
 //    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 //    public ErrorMsg handleMySQL(Exception e) {
+//        log.error(e.getMessage());
 //        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
 
     @ExceptionHandler({AlreadyExistsException.class,EmptyParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleAlreadyExistsExceptionAndEmptyParamException(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleInvalidPassword(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 

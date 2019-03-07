@@ -1,5 +1,6 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +13,8 @@ import java.sql.SQLException;
 @Component
 public class TagDAO {
 
+    static Logger log = Logger.getLogger(TagDAO.class.getName());
+
     @Autowired
     JdbcTemplate jdbcTemplate;
     public static final String SQL = "SELECT tag_ID,tag_name FROM tags";
@@ -21,6 +24,7 @@ public class TagDAO {
             String sql = SQL + " WHERE tag_name=?";
             return jdbcTemplate.queryForObject(sql, new Object[]{name}, (resultSet, i) -> mapRow(resultSet));
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }

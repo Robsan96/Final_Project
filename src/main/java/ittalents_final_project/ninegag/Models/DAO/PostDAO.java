@@ -3,6 +3,7 @@ package ittalents_final_project.ninegag.Models.DAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,8 @@ import java.util.List;
 
 @Component
 public class PostDAO {
+
+    static Logger log = Logger.getLogger(PostDAO.class.getName());
 
     public static final String SQL = "SELECT  post_ID, title, content_URL, profile_ID, s.section_ID, " +
             "date_time_created, seeSensitive, attribute_poster, (SELECT COUNT(*)" +
@@ -37,6 +40,7 @@ public class PostDAO {
                     "date_time_created, seeSensitive, attribute_poster FROM posts WHERE post_ID=?";
             return jdbcTemplate.queryForObject(sql, new Object[]{Id}, ((resultSet, i) -> mapRow(resultSet)));
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -52,6 +56,7 @@ public class PostDAO {
             }
             return post;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -62,6 +67,7 @@ public class PostDAO {
             List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId}, (resultSet, i) -> mapRowBasicDTO(resultSet));
             return posts;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -105,6 +111,7 @@ public class PostDAO {
                 return null;
             }
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -119,6 +126,7 @@ public class PostDAO {
             }
             return posts;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }

@@ -4,6 +4,7 @@ import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +17,11 @@ import java.util.Base64;
 @RequestMapping(value = "/images")
 public class FileController extends BaseController {
 
+
     @Autowired
     UserDAOImplem dao;
+
+    static Logger log = Logger.getLogger(FileController.class.getName());
 
 
     private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
@@ -41,6 +45,7 @@ public class FileController extends BaseController {
             dao.updateUserByID(user);
 
         } catch (IOException e) {
+            log.error(e.getMessage());
             System.out.println("Error in uploading avatar!");
         }
     }
@@ -78,6 +83,7 @@ public class FileController extends BaseController {
             byte[] bytes = Files.readAllBytes(newFile.toPath());
             return bytes;
         } catch (IOException e) {
+            log.error(e.getMessage());
             throw new Exception("Something rly got out of hand ! this msg shoud not be displayed ever !");
         }
     }

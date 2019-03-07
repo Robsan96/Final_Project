@@ -1,6 +1,7 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,9 @@ import java.util.List;
 
 @Component
 public class CommentDAO {
+
+    static Logger log = Logger.getLogger(CommentDAO.class.getName());
+
     @Autowired
     JdbcTemplate jdbcTemplate;
     private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID,c.reply_of_ID," +
@@ -36,6 +40,7 @@ public class CommentDAO {
             return comment;
 
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -59,6 +64,7 @@ public class CommentDAO {
                     (resultSet, i) -> mapRowR(resultSet));
             return comments;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -69,6 +75,7 @@ public class CommentDAO {
             List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRowR(resultSet));
             return comments;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -79,6 +86,7 @@ public class CommentDAO {
             List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
             return comments;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -89,6 +97,7 @@ public class CommentDAO {
             List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
             return comments;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
