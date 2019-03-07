@@ -20,6 +20,7 @@ import java.util.List;
 @Component
 public class PostDAO {
 
+<<<<<<< HEAD
     static Logger log = Logger.getLogger(PostDAO.class.getName());
 
     public static final String SQL = "SELECT  post_ID, title, content_URL, profile_ID, s.section_ID, " +
@@ -27,6 +28,13 @@ public class PostDAO {
             " FROM comments  WHERE post_ID= ?)AS comments, " +
             "(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=1" +
             " -(SELECT COUNT(*) FROM post_likes WHERE post_id= ? AND status=0))AS votes " +
+=======
+    public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID, " +
+            "p.date_time_created, p.seeSensitive, p.attribute_poster, (SELECT COUNT(*)" +
+            "FROM comments  WHERE post_ID=p.post_ID )AS comments," +
+            "(SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
+            "FROM post_likes WHERE post_id=p.post_ID AND status=1)AS votes " +
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             "FROM posts p JOIN sections s ON (p.section_ID=s.section_ID)";
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -49,7 +57,7 @@ public class PostDAO {
         try {
             String sql = SQL + " WHERE post_ID=?";
 
-            ResponsePostDTO post = jdbcTemplate.queryForObject(sql, new Object[]{Id, Id, Id, Id},
+            ResponsePostDTO post = jdbcTemplate.queryForObject(sql, new Object[]{Id},
                     ((resultSet, i) -> mapRowBasicDTO(resultSet)));
             if (showComments) {
                 post.setAllComments(commentDAO.getAllByPostDTO(post.getPostID()));
@@ -63,7 +71,7 @@ public class PostDAO {
 
     public List<ResponsePostDTO> getAllPostsByUser(int userId) {
         try {
-            String sql = SQL + "WHERE profile_ID=? ORDER BY date_time_created DESC ";
+            String sql = SQL + "WHERE user_ID=? ORDER BY  votes DESC ";
             List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId}, (resultSet, i) -> mapRowBasicDTO(resultSet));
             return posts;
         } catch (EmptyResultDataAccessException e) {
@@ -73,12 +81,8 @@ public class PostDAO {
     }
 
     public List<ResponsePostDTO> getAllPostsByTag(int tag) {
-        String sql = "SELECT post_id FROM post_tags WHERE tag_id=? ORDER BY date_time_created DESC";
-        List<ResponsePostDTO> posts = new ArrayList<>();
-        List<Integer> postsId = jdbcTemplate.queryForList(sql, new Object[]{tag}, Integer.class);
-        for (Integer i : postsId) {
-            posts.add(this.getBPostDTO(i, false));
-        }
+        String sql = SQL + " JOIN post_tags t ON(p.post_ID=t.post_id) WHERE t.tag_id=? ORDER BY votes DESC";
+        List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{tag}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         if (posts.size() > 0) {
             return posts;
         } else {
@@ -87,9 +91,9 @@ public class PostDAO {
     }
 
     public List<ResponsePostDTO> getAllPostsBySection(int sectionId) {
-        String sql = SQL + " WHERE p.section_ID=? ORDER BY date_time_created DESC";
+        String sql = SQL + " WHERE p.section_ID=? ORDER BY  votes DESC";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql,
-                new Object[]{sectionId, sectionId, sectionId, sectionId}, (resultSet, i) -> mapRowBasicDTO(resultSet));
+                new Object[]{sectionId}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         if (posts.size() > 0) {
             return posts;
         } else {
@@ -99,12 +103,15 @@ public class PostDAO {
 
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         try {
-            String sql = "SELECT post_ID FROM comments WHERE profile_ID=? ORDER BY date_time_created DESC";
-            List<ResponsePostDTO> posts = new ArrayList<>();
-            List<Integer> postsId = jdbcTemplate.queryForList(sql, new Object[]{userId}, Integer.class);
-            for (Integer i : postsId) {
-                posts.add(this.getBPostDTO(i, false));
-            }
+            String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID," +
+                    "     p.date_time_created, p.seeSensitive, p.attribute_poster, (SELECT COUNT(*)" +
+                    "     FROM comments  WHERE post_ID=p.post_ID )AS comments," +
+                    "     (SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
+                    "      FROM post_likes WHERE post_id=p.post_ID AND status=1)AS votes " +
+                    "      FROM posts p JOIN sections s ON (p.section_ID=s.section_ID) " +
+                    "      JOIN comments c ON(p.post_ID=c.post_ID) WHERE c.profile_ID=? ORDER BY votes DESC ";
+            List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
+                    (resultSet, i) -> mapRowBasicDTO(resultSet));
             if (posts.size() > 0) {
                 return posts;
             } else {
@@ -116,41 +123,55 @@ public class PostDAO {
         }
     }
 
-    public List<ResponsePostDTO> getAllPostsVotedBy(int userId) {
-        try {
-            String sql = "SELECT post_ID FROM post_likes WHERE profile_ID=? ORDER BY date_time_created DESC";
-            List<ResponsePostDTO> posts = new ArrayList<>();
-            List<Integer> postsId = jdbcTemplate.queryForList(sql, new Object[]{userId}, Integer.class);
-            for (Integer i : postsId) {
-                posts.add(this.getBPostDTO(i, false));
-            }
+    public List<ResponsePostDTO> getAllPostsMadeBy(int userId) {
+        String sql = SQL + " WHERE p.profile_ID=? ORDER BY votes DESC";
+        List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
+                (resultSet, i) -> mapRowBasicDTO(resultSet));
+        if (posts.size() > 0) {
             return posts;
+        } else {
+            return null;
+        }
+    }
+    
+    public List<ResponsePostDTO> getAllPostsVotedBy(int userId) {
+        String sql = SQL + " JOIN post_likes l ON (p.post_ID=l.post_id) WHERE l.profile_id=? ORDER BY votes DESC";
+        List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
+                (resultSet, i) -> mapRowBasicDTO(resultSet));
+        if (posts.size() > 0) {
+            return posts;
+<<<<<<< HEAD
         } catch (EmptyResultDataAccessException e) {
             log.error(e.getMessage());
+=======
+        } else {
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }
 
     public int addPost(Post post) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
         String sql = "INSERT INTO posts(title,content_URL,profile_ID,section_ID,seeSensitive,attribute_poster)" +
                 "VALUES(?,?,?,?,?,?)";
-        jdbcTemplate.update(sql, new Object[]{post.getTitle(), post.getContentURL(), post.getProfileID(),
+        return jdbcTemplate.update(sql, new Object[]{post.getTitle(), post.getContentURL(), post.getProfileID(),
                 post.getSectionID(), post.isSeeSensitive(), post.isAtrributePoster()});
-        return (int) keyHolder.getKey();
     }
 
     @Transactional
     public int removePost(Post post) {
-
-        List<Comment> comments = commentDAO.getAllByPost(post);
-        for (Comment comment : comments) {
-            commentDAO.deleteComment(comment);
+        try {
+            List<Comment> comments = commentDAO.getAllByPost(post);
+            for (Comment comment : comments) {
+                commentDAO.deleteComment(comment);
+            }
+            jdbcTemplate.update("DELETE FROM post_likes WHERE post_id=?", new Object[]{post.getPostID()});
+            jdbcTemplate.update("DELETE FROM post_tags WHERE post_id=?", new Object[]{post.getPostID()});
+            jdbcTemplate.update("DELETE FROM posts WHERE post_id=?", new Object[]{post.getPostID()});
+            return post.getPostID();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        jdbcTemplate.update("DELETE FROM post_likes WHERE post_id=?", new Object[]{post.getPostID()});
-        jdbcTemplate.update("DELETE FROM post_tags WHERE post_id=?", new Object[]{post.getPostID()});
-        jdbcTemplate.update("DELETE FROM posts WHERE post_id=?", new Object[]{post.getPostID()});
-        return post.getPostID();
+        return 0;
     }
 
     public int votePost(long userId, int postId, Boolean vote) {

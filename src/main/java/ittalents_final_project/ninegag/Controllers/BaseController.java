@@ -27,7 +27,7 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({EmptyParameterException.class, BadParamException.class})
+    @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
         log.error(e.getMessage());
@@ -50,6 +50,7 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
 //        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
 
+<<<<<<< HEAD
     @ExceptionHandler({AlreadyExistsException.class,EmptyParameterException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleAlreadyExistsExceptionAndEmptyParamException(Exception e) {
@@ -57,6 +58,8 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
+=======
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {

@@ -10,7 +10,6 @@ import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,13 +21,20 @@ public class CommentDAO {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
-    private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID,c.reply_of_ID," +
-            "c.date_time_created,u.username AS ownerName,u.avatar AS ownerAvatar " +
-            "FROM comments c JOIN users u ON(c.profile_ID=u.user_ID) ";
+    private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID," +
+            "c.reply_of_ID,c.date_time_created,(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID " +
+            "AND status=1 -(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID AND status=0)) AS votes" +
+            ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
+            ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
     public int addComment(Comment comment) {
         String sql = "INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)";
         return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent()});
+    }
+
+    public int addReply(Comment comment) {
+        String sql = "INSERT INTO comments(post_ID,profile_ID,content,reply_of_ID) VALUES(?,?,?,?)";
+        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent(), comment.getReply()});
     }
 
     public Comment getById(int id) {
@@ -58,18 +64,23 @@ public class CommentDAO {
     }
 
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
-        try {
-            String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
-            List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
-                    (resultSet, i) -> mapRowR(resultSet));
+        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY votes DESC";
+        List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
+                (resultSet, i) -> mapRowR(resultSet));
+        if (comments.size() > 0) {
             return comments;
+<<<<<<< HEAD
         } catch (EmptyResultDataAccessException e) {
             log.error(e.getMessage());
+=======
+        } else {
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }
 
     public List<Comment> getAllByPost(Post post) {
+<<<<<<< HEAD
         try {
             String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
             List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()}, (resultSet, i) -> mapRowR(resultSet));
@@ -78,28 +89,49 @@ public class CommentDAO {
             log.error(e.getMessage());
             return null;
         }
+=======
+        String sql = "SELECT * FROM comments WHERE post_ID=? ";
+        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
+                                                   (resultSet, i) -> mapRowR(resultSet));
+        return comments;
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
     }
 
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
-        try {
-            String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
-            List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
+        String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
+        List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
+        if (comments.size() > 0) {
             return comments;
+<<<<<<< HEAD
         } catch (EmptyResultDataAccessException e) {
             log.error(e.getMessage());
+=======
+        } else {
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
+            return null;
+        }
+    }
+
+    public List<ResponseCommentDTO> getAllFreshByPostDTO(int postId) {
+        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
+        List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
+                (resultSet, i) -> mapRowR(resultSet));
+        if (comments.size() > 0) {
+            return comments;
+<<<<<<< HEAD
+        } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
+=======
+        } else {
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
             return null;
         }
     }
 
     private List<Comment> getAllByComment(Comment comment) {
-        try {
-            String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
-            List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
-            return comments;
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-            return null;
-        }
+        String sql = "SELECT * FROM comments WHERE reply_of_ID=? ORDER BY date_time_created DESC";
+        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
+        return comments;
     }
 
     public int voteComment(long userId, int commentId, boolean vote) {
@@ -145,6 +177,8 @@ public class CommentDAO {
                 rs.getInt("profile_ID"),
                 rs.getInt("reply_of_ID"),
                 rs.getString("date_time_created"),
+                rs.getInt("votes"),
+                rs.getInt("replies"),
                 rs.getString("ownerName"),
                 rs.getString("ownerAvatar"));
     }

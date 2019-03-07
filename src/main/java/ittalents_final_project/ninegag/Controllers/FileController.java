@@ -1,6 +1,8 @@
 package ittalents_final_project.ninegag.Controllers;
 
+import ittalents_final_project.ninegag.Models.DAO.PostDAO;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
+import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -14,24 +16,29 @@ import java.nio.file.Files;
 import java.util.Base64;
 
 @RestController
-@RequestMapping(value = "/images")
 public class FileController extends BaseController {
 
 
     @Autowired
-    UserDAOImplem dao;
+    UserDAOImplem daoU;
+@Autowired
+    PostDAO daoP;
 
+<<<<<<< HEAD
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
     private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
+=======
+    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
+>>>>>>> 1bb67467e71cd74b327115786cb871dbc6fda967
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
-    @PostMapping(value = "/profiles")
+    @PostMapping(value = "/images/profiles")
     public void upploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session) throws NotLoggedException {
         validateLogged(session);
         if (url.isEmpty() || url == null) {
-            throw new NullPointerException("URL is not valide or empty!");
+            throw new NullPointerException("URL is not valid or empty!");
         }
         String base64 = url;
         User user = (User) session.getAttribute(LOGGED);
@@ -42,7 +49,7 @@ public class FileController extends BaseController {
             fos.write(bytes);
             user.setAvatar(newFile.getName());
 
-            dao.updateUserByID(user);
+            daoU.updateUserByID(user);
 
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -50,30 +57,29 @@ public class FileController extends BaseController {
         }
     }
 
-    //TODO Make Posts and then check this out !
-//    @PostMapping(value = "posts")
-//    public void upploadImageToPost(@RequestParam("URL") String url,
-//                                   @RequestParam("postId") int postId,
-//                                   HttpSession session) throws NotLoggedException {
-//        validateLogged(session);
-//        if (url.isEmpty() || url == null) {
-//            throw new NullPointerException("URL is not valide or empty!");
-//        }
-//        String base64 = url;
-//       Post post=daoP.getPostById(postId);
-//        byte[] bytes = Base64.getDecoder().decode(base64);
-//        String fileName = post.getPostID() + FILE_NAME;
-//        File newFile = new File(FILE_PATH + fileName);
-//        try (FileOutputStream fos = new FileOutputStream(newFile)) {
-//            fos.write(bytes);
-//            post.setContentURL(newFile.getName());
-//            daoP.uploadImage(post);
-//        }catch (IOException e){
-//            System.out.println("Error in uploading post image!");
-//        }
-//    }
 
-    @GetMapping(value = "/{name}", produces = "image/png")
+    @PostMapping(value = "posts/add")
+    public void upploadImageToPost(@RequestBody Post newPost, HttpSession session) throws NotLoggedException {
+        validateLogged(session);
+        User user= (User) session.getAttribute(LOGGED);
+        newPost.setProfileID(user.getUser_ID());
+        if (newPost.getContentURL().isEmpty() || newPost.getContentURL() == null) {
+            throw new NullPointerException("URL is not valid or empty!");
+        }
+        String base64 = newPost.getContentURL();
+        byte[] bytes = Base64.getDecoder().decode(base64);
+        String fileName = newPost.getProfileID() + FILE_NAME;
+        File newFile = new File(FILE_PATH + fileName);
+        try (FileOutputStream fos = new FileOutputStream(newFile)) {
+            fos.write(bytes);
+            newPost.setContentURL(newFile.getName());
+            daoP.addPost(newPost);
+        }catch (IOException e){
+            System.out.println("Error in uploading post image!"+ e.getMessage()+ "   "+e.getCause());
+        }
+    }
+
+    @GetMapping(value = "/images/{name}", produces = "image/png")
     public byte[] downloadImage(@PathVariable(value = "name") String imageName) throws Exception {
         File newFile = new File(FILE_PATH + imageName);
         if (!newFile.exists()) {
