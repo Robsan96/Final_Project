@@ -1,15 +1,13 @@
 package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.CommentDAO;
+import ittalents_final_project.ninegag.Models.DAO.PostDAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
+import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.User;
-import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotAdminException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
-import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
+import ittalents_final_project.ninegag.Utils.Exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -20,29 +18,48 @@ import java.util.List;
 public class CommentController extends BaseController {
 
     @Autowired
+    PostDAO daoP;
+    @Autowired
     CommentDAO daoC;
 
     @PostMapping(value = "/add")
     public String addComment(@RequestBody Comment comment, HttpSession session)
-            throws NotLoggedException, EmptyParameterException {
+            throws NotLoggedException, EmptyParameterException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         comment.setProfile((int) user.getUser_ID());
-        if (comment.getContent() == null) {
+        if (comment.getContent() == null || comment.getContent().length() == 0) {
             throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
         }
-        if (comment.getPost() == 0) {
-            throw new EmptyParameterException("Comment field 'post' is empty or wrong written!");
+        Post post = daoP.getPostById(comment.getPost());
+        if (post == null) {
+            throw new BadParamException("Post with that id does not exist and cant be commented");
         }
-
-        if (comment.getProfile() == 0) {
-            throw new EmptyParameterException("Comment field 'profile' is empty or wrong written");
-        }
-
-        if (daoC.addComment(comment) == 1) {
-            return "Comment added successfully";
+        if (daoC.addComment(comment) > 0) {
+            return "Comment was added successfully";
         } else {
-            return "Comment was not added for some reason,pls try again!";
+            return "Something went wrong with adding reply , pls try again";
+        }
+    }
+
+    @PostMapping(value = "/add/reply")
+    public String addCommentReply(@RequestBody Comment comment, HttpSession session) throws NotLoggedException, EmptyParameterException, BadParamException {
+        validateLogged(session);
+        User user = (User) session.getAttribute(LOGGED);
+        comment.setProfile(user.getUser_ID());
+        Comment mainComment = daoC.getById(comment.getReply());
+        if (comment.getContent() == null || comment.getContent().length() == 0) {
+            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+        }
+        if (mainComment == null) {
+            throw new BadParamException("cant reply on non-existing comment!");
+        } else {
+            comment.setPost(mainComment.getPost());
+        }
+        if (daoC.addReply(comment) > 0) {
+            return "Reply was added successfully";
+        } else {
+            return "Something went wrong with adding reply , pls try again";
         }
     }
 
@@ -79,8 +96,21 @@ public class CommentController extends BaseController {
         }
     }
 
+    @GetMapping(value = "/fresh/{postId}")
+    public List<ResponseCommentDTO> getAllCommentsSortByDate(@PathVariable("postId") int postId) {
+        List<ResponseCommentDTO> comments = daoC.getAllFreshByPostDTO(postId);
+        if (comments == null) {
+            throw new NullPointerException("There are no comments for this post!");
+        }
+        return comments;
+    }
+
     @GetMapping(value = "/replies/{commentId}")
-    public List<ResponseCommentDTO> getAllRepliesOfComment(@PathVariable("commentId") int commentId) {
+    public List<ResponseCommentDTO> getAllRepliesOfComment(@PathVariable("commentId") int commentId) throws BadParamException {
+        Comment comment = daoC.getById(commentId);
+        if (comment == null) {
+            throw new BadParamException("There are no comment with that id !");
+        }
         List<ResponseCommentDTO> comments = daoC.getAllByCommentDTO(commentId);
         if (comments == null) {
             throw new NullPointerException("There are no replies for that comment (" + commentId + ")");
@@ -91,7 +121,7 @@ public class CommentController extends BaseController {
 
     @PutMapping(value = "/uppdate")
     public int uppdateCommentContent(@RequestBody Comment comment, HttpSession session)
-            throws NotLoggedException, NotAdminException, PermitionDeniedException {
+            throws NotLoggedException, PermitionDeniedException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         if (daoC.getById(comment.getId()) == null) {
@@ -107,7 +137,7 @@ public class CommentController extends BaseController {
 
     @DeleteMapping(value = "/{commentId}")
     public String deleteComment(@PathVariable(value = "commentId") int commentId, HttpSession session)
-            throws NotLoggedException, PermitionDeniedException, NotAdminException {
+            throws NotLoggedException, PermitionDeniedException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         Comment comment = daoC.getById(commentId);
@@ -117,6 +147,6 @@ public class CommentController extends BaseController {
         if (comment == null) {
             throw new NullPointerException("Comment with that id does not exist !");
         }
-            return "Comment deleted with id "+daoC.deleteComment(comment);
-        }
+        return "Comment deleted with id " + daoC.deleteComment(comment);
     }
+}

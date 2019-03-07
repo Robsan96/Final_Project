@@ -23,7 +23,7 @@ public abstract class BaseController {
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({EmptyParameterException.class, BadParamException.class})
+    @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
@@ -42,12 +42,6 @@ public abstract class BaseController {
 //    public ErrorMsg handleMySQL(Exception e) {
 //        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
-
-    @ExceptionHandler({AlreadyExistsException.class,EmptyParameterException.class})
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMsg handleAlreadyExistsExceptionAndEmptyParamException(Exception e) {
-        return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
-    }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)

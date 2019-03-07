@@ -1,6 +1,9 @@
 package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
+import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
+import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
+import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
