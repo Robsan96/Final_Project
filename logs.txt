@@ -10,3 +10,4 @@
 2019-03-07-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
 2019-03-07-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Oop file with that name does not exist !
 2019-03-07-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Oop file with that name does not exist !
+2019-03-07-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
