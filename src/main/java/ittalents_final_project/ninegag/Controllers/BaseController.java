@@ -29,7 +29,7 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
 
     @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMsg handleEmptyParamExeption(Exception e) {
+    public ErrorMsg handleEmptyParamException(Exception e) {
         log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
@@ -58,7 +58,7 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
         log.error(e.getMessage());
-        return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ErrorMsg("Try different username, email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})

@@ -5,10 +5,7 @@ import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
-import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
-import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
-import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
+import ittalents_final_project.ninegag.Utils.Exceptions.*;
 import ittalents_final_project.ninegag.Utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -44,7 +41,13 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/register")
-    public void saveUser(@RequestBody User user, HttpSession session) throws MessagingException, InvalidPasswordException {
+    public void saveUser(@RequestBody User user, HttpSession session) throws MessagingException, InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException, BadParamException {
+        if(dao.findUserByEmail(user.getEmail())!=null){
+            throw new AlreadyExistsException("You have already registered with this email.");
+        }
+        if(dao.findUserByUsername(user.getUsername())!=null){
+            throw new AlreadyExistsException("That username already exists.");
+        }
         if (validatePassword(user.getPassword())) {
             String salt = PasswordUtils.getSalt(30);
             String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
@@ -78,12 +81,13 @@ public class UserController extends BaseController {
             throw new PermitionDeniedException("You are not admin");
         }
     }
-        @DeleteMapping(value = "/deleteUser")
-        public void deleteUser (HttpSession session) throws NotLoggedException {
-            validateLogged(session);
-            User user = (User) session.getAttribute(LOGGED);
-            dao.deleteUserByID(user.getUser_ID());
-        }
+
+    @DeleteMapping(value = "/deleteUser")
+    public void deleteUser (HttpSession session) throws NotLoggedException {
+        validateLogged(session);
+        User user = (User) session.getAttribute(LOGGED);
+        dao.deleteUserByID(user.getUser_ID());
+    }
 
     @DeleteMapping(value = "/deleteUserAdmin")
     public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
@@ -91,7 +95,7 @@ public class UserController extends BaseController {
         dao.deleteUserByEmail(user.getEmail());
     }
 
-@GetMapping(value="/user/posts/{id}")
+    @GetMapping(value="/user/posts/{id}")
     public UserPostsDTO getUserPosts(@PathVariable(value = "id") int user_ID){
         UserPostsDTO userPosts = dao.getUserPosts(user_ID);
         if(userPosts==null){

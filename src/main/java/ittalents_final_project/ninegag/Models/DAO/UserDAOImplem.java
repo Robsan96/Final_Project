@@ -186,6 +186,12 @@ public class UserDAOImplem implements UserDAO {
         return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new UserMapper());
     }
 
+    public User findUserByUsername(String username) {
+        String sql = "SELECT * FROM users WHERE username = :username";
+
+        return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(username)), new UserMapper());
+    }
+
     public Object findUserByID(int user_ID) {
         String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
 

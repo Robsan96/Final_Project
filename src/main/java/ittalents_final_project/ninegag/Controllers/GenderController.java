@@ -5,6 +5,7 @@ import ittalents_final_project.ninegag.Models.POJO.Gender;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ public class GenderController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/delete/Gender")
+    @DeleteMapping(value = "/delete/Gender")
     public void removeGender(@RequestBody Gender gender, HttpSession session) throws NotLoggedException, PermitionDeniedException{
         if (validateAdmin(session)) {
             dao.deleteGenderByID(gender.getGender_ID());
