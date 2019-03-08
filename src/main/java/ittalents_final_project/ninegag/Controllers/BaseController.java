@@ -41,12 +41,12 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({SQLException.class})
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMsg handleMySQL(Exception e) {
-        log.error(e.getMessage());
-        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
-    }
+//    @ExceptionHandler({SQLException.class})
+//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+//    public ErrorMsg handleMySQL(Exception e) {
+//        log.error(e.getMessage());
+//        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+//    }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)

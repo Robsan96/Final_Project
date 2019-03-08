@@ -8,11 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -62,15 +66,20 @@ public class SectionDAO {
     }
 
     public int addSection(String name) {
-        String sql = "INSERT INTO sections(section_name) VALUES(?)";
-        return jdbcTemplate.update(sql, new Object[]{name});
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO sections(section_name) VALUES(?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, name);
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().intValue();
     }
 
     @Transactional
     public int deleteSection(Section section) {
         List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId());
         for (ResponsePostDTO post : posts) {
-            System.out.println("opa");
             daoP.removePost(post);
         }
         jdbcTemplate.update("DELETE FROM sections WHERE section_id=?", new Object[]{section.getId()});

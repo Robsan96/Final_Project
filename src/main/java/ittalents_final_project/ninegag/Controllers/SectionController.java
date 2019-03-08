@@ -59,16 +59,12 @@ public class SectionController extends BaseController {
         }
     }
 
-    @PostMapping(value = "/{name}")
-    public String addSection(@PathVariable(value = "name") String name, HttpSession session)
+    @PostMapping(value = "/add")
+    public String addSection(@RequestBody Section section, HttpSession session)
             throws AlreadyExistsException, NotLoggedException, PermitionDeniedException {
         if (validateAdmin(session)) {
-            if (dao.getByName(name) == null) {
-                if (dao.addSection(name) == 1) {
-                    return "Section added successfully";
-                } else {
-                    return "Section was not added for some reason,pls try again or contact the programmer";
-                }
+            if (dao.getByName(section.getName()) == null) {
+                return "Section was added with ID -> " + dao.addSection(section.getName());
             } else {
                 throw new AlreadyExistsException("This section already exist !");
             }

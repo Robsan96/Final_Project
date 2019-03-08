@@ -1,11 +1,13 @@
 package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.PostDAO;
+import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
 import ittalents_final_project.ninegag.Models.DAO.TagDAO;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Tag;
 import ittalents_final_project.ninegag.Models.POJO.User;
+import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import org.apache.log4j.Logger;
@@ -30,11 +32,13 @@ public class FileController extends BaseController {
     RequestPostDTO dtoC;
     @Autowired
     TagDAO daoT;
+    @Autowired
+    SectionDAO daoS;
 
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
+    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
@@ -48,7 +52,7 @@ public class FileController extends BaseController {
         byte[] base64 = url.getBytes();
         User user = (User) session.getAttribute(LOGGED);
         String encoded = Base64.getEncoder().encodeToString(base64);
-        base64=Base64.getDecoder().decode(encoded);
+        base64 = Base64.getDecoder().decode(encoded);
         String fileName = user.getEmail() + FILE_NAME;
         File newFile = new File(FILE_PATH + fileName);
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
@@ -66,15 +70,18 @@ public class FileController extends BaseController {
     @PostMapping(value = "posts/add")
     @Transactional
     public String upploadImageToPost(@RequestBody RequestPostDTO postDTO, HttpSession session)
-            throws NotLoggedException, IOException {
+            throws NotLoggedException, IOException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         postDTO.setProfileID(user.getUser_ID());
         if (postDTO.getContentURL().isEmpty() || postDTO.getContentURL() == null) {
-            throw new NullPointerException("URL is not valid or empty!");
+            throw new BadParamException("URL is not valid or empty!");
         }
         if (postDTO.getTitle().isEmpty() || postDTO.getTitle() == null) {
-            throw new NullPointerException("Title of the post cannot be empty ");
+            throw new BadParamException("Title of the post cannot be empty ");
+        }
+        if (daoS.getById(postDTO.getSectionID()) == null) {
+            throw new BadParamException("Section with that ID does not exist !");
         }
         postDTO.setContentURL(CreateImage(postDTO));
         int postId = daoP.addPost(postDTO);
@@ -100,7 +107,7 @@ public class FileController extends BaseController {
 
     @GetMapping(value = "/images/{name}", produces = "image/png")
     public byte[] downloadImage(@PathVariable(value = "name") String imageName) throws Exception {
-        File newFile = new File(FILE_PATH + imageName+".jpg");
+        File newFile = new File(FILE_PATH + imageName + ".jpg");
         if (!newFile.exists()) {
             throw new EmptyParameterException("Oop file with that name does not exist !");
         }

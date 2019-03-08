@@ -5,13 +5,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -29,8 +33,16 @@ public class CommentDAO {
             ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
     public int addComment(Comment comment) {
-        String sql = "INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)";
-        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent()});
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, comment.getPost());
+            ps.setInt(2, comment.getProfile());
+            ps.setString(3, comment.getContent());
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().intValue();
     }
 
     public int addReply(Comment comment) {
@@ -66,7 +78,7 @@ public class CommentDAO {
     }
 
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
-        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY votes DESC";
+        String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
         return comments;

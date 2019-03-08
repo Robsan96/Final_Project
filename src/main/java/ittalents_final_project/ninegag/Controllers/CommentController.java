@@ -35,11 +35,7 @@ public class CommentController extends BaseController {
         if (post == null) {
             throw new BadParamException("Post with that id does not exist and cant be commented");
         }
-        if (daoC.addComment(comment) > 0) {
-            return "Comment was added successfully";
-        } else {
-            return "Something went wrong with adding reply , pls try again";
-        }
+        return "Comment was added successfully with ID -> " + daoC.addComment(comment);
     }
 
     @PostMapping(value = "/add/reply")
