@@ -62,20 +62,14 @@ public class CommentController extends BaseController {
     @PostMapping(value = "/votes")
     public String voteComment(@RequestParam("commentId") int commentId,
                               @RequestParam("vote") boolean vote,
-                              HttpSession session) throws EmptyParameterException, NotLoggedException {
+                              HttpSession session) throws NotLoggedException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
-        if (user.getUser_ID() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
-        }
-        if (commentId == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
-        }
         Comment comment = daoC.getById(commentId);
         if (comment == null) {
-            throw new NullPointerException("There is no comment with that id !");
+            throw new BadParamException("There is no comment with that id to like !");
         }
-        if (daoC.voteComment(2, commentId, vote) == 1) {
+        if (daoC.voteComment(user.getUser_ID(), commentId, vote) == 1) {
             return "Voted";
         } else {
             return "Vote failed , pls try again";

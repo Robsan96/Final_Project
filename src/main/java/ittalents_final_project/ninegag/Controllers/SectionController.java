@@ -61,8 +61,11 @@ public class SectionController extends BaseController {
 
     @PostMapping(value = "/add")
     public String addSection(@RequestBody Section section, HttpSession session)
-            throws AlreadyExistsException, NotLoggedException, PermitionDeniedException {
+            throws AlreadyExistsException, NotLoggedException, PermitionDeniedException, BadParamException {
         if (validateAdmin(session)) {
+            if (section.getName().isEmpty() || section.getName() == null) {
+                throw new BadParamException("Name cant be empty");
+            }
             if (dao.getByName(section.getName()) == null) {
                 return "Section was added with ID -> " + dao.addSection(section.getName());
             } else {

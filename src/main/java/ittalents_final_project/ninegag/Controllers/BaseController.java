@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.apache.log4j.Logger;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
 @RestController
 public abstract class BaseController {
 
-static Logger log = Logger.getLogger(BaseController.class.getName());
+    static Logger log = Logger.getLogger(BaseController.class.getName());
 
     @ExceptionHandler({MessagingException.class, NullPointerException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -41,6 +42,13 @@ static Logger log = Logger.getLogger(BaseController.class.getName());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
+    @ExceptionHandler({IOException.class})
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMsg handleIOException(Exception e) {
+        log.error(e.getMessage());
+        return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+    }
+    
 //    @ExceptionHandler({SQLException.class})
 //    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 //    public ErrorMsg handleMySQL(Exception e) {

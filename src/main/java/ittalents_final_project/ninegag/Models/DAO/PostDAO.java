@@ -108,10 +108,6 @@ public class PostDAO {
         }
     }
 
-    public List<Post> c(int sectionId) {
-        return jdbcTemplate.query("SELECT * FROM posts WHERE section_ID=?",
-                new Object[]{sectionId}, (resultSet, i) -> mapRow(resultSet));
-    }
 
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         try {

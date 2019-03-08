@@ -101,7 +101,7 @@ public class FileController extends BaseController {
             requestPostDTO.setContentURL(newFile.getName());
             return requestPostDTO.getContentURL();
         } catch (IOException e) {
-            throw new IOException("Error in uploading post image!");
+            throw new IOException("Error in uploading post image or profile avatar!");
         }
     }
 

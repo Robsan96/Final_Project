@@ -103,7 +103,7 @@ public class CommentDAO {
     }
 
     public List<ResponseCommentDTO> getAllFreshByPostDTO(int postId) {
-        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
+        String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
         return comments;
@@ -111,7 +111,7 @@ public class CommentDAO {
 
     private List<Comment> getAllByComment(Comment comment) {
         String sql = "SELECT * FROM comments WHERE reply_of_ID=? ORDER BY date_time_created DESC";
-        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
+        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRow(resultSet));
         return comments;
     }
 
