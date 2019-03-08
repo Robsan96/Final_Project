@@ -1,11 +1,14 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
+import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
+import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.*;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,14 +18,14 @@ import java.util.List;
 public class SectionDAO {
 
     @Autowired
-    NamedParameterJdbcTemplate jd;
+    private PostDAO daoP;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     public static final String SQL = "SELECT section_id , section_name FROM sections";
 
     public List<Section> getAll() {
         try {
-            return jd.query(SQL, (resultSet, i) -> mapRow(resultSet));
+            return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
@@ -55,6 +58,17 @@ public class SectionDAO {
     public int addSection(String name) {
         String sql = "INSERT INTO sections(section_name) VALUES(?)";
         return jdbcTemplate.update(sql, new Object[]{name});
+    }
+
+    @Transactional
+    public int deleteSection(Section section) {
+        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId());
+        for (ResponsePostDTO post : posts) {
+            System.out.println("opa");
+            daoP.removePost(post);
+        }
+        jdbcTemplate.update("DELETE FROM sections WHERE section_id=?", new Object[]{section.getId()});
+        return section.getId();
     }
 }
 

@@ -119,8 +119,8 @@ public class CommentController extends BaseController {
         }
     }
 
-    @PutMapping(value = "/uppdate")
-    public int uppdateCommentContent(@RequestBody Comment comment, HttpSession session)
+    @PutMapping(value = "/update")
+    public String uppdateCommentContent(@RequestBody Comment comment, HttpSession session)
             throws NotLoggedException, PermitionDeniedException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
@@ -128,7 +128,11 @@ public class CommentController extends BaseController {
             throw new NullPointerException("Comment with that id does not exist");
         } else {
             if (comment.getProfile() == user.getUser_ID() || validateAdmin(session)) {
-                return daoC.uppdateComment(comment);
+                if (daoC.uppdateComment(comment) > 0) {
+                    return "Comment with ID " + comment.getId() + " updated!";
+                } else {
+                    return "Comment wasnt update for some reason pls contact support!";
+                }
             } else {
                 throw new PermitionDeniedException("You dont have acces to that option!");
             }
@@ -137,15 +141,15 @@ public class CommentController extends BaseController {
 
     @DeleteMapping(value = "/{commentId}")
     public String deleteComment(@PathVariable(value = "commentId") int commentId, HttpSession session)
-            throws NotLoggedException, PermitionDeniedException {
+            throws NotLoggedException, PermitionDeniedException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         Comment comment = daoC.getById(commentId);
-        if (user.getUser_ID() != comment.getProfile() && !validateAdmin(session)) {
-            throw new PermitionDeniedException("You dont have acces to that option");
-        }
         if (comment == null) {
-            throw new NullPointerException("Comment with that id does not exist !");
+            throw new BadParamException("Comment with that id does not exist !");
+        }
+        if (user.getUser_ID() != comment.getProfile() && !validateAdmin(session)) {
+            throw new PermitionDeniedException("You don't have access to that option");
         }
         return "Comment deleted with id " + daoC.deleteComment(comment);
     }

@@ -16,8 +16,9 @@ import java.util.List;
 @Component
 public class CommentDAO {
     @Autowired
-    JdbcTemplate jdbcTemplate;
-    private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID," +
+    private JdbcTemplate jdbcTemplate;
+
+    private static final String SELECT_COMMENT = "SELECT c.comment_ID , c.content,c.post_ID,c.profile_ID," +
             "c.reply_of_ID,c.date_time_created,(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID " +
             "AND status=1 -(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID AND status=0)) AS votes" +
             ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
@@ -62,17 +63,13 @@ public class CommentDAO {
         String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
-        if (comments.size() > 0) {
-            return comments;
-        } else {
-            return null;
-        }
+        return comments;
     }
 
     public List<Comment> getAllByPost(Post post) {
         String sql = "SELECT * FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
-                                                   (resultSet, i) -> mapRowR(resultSet));
+                (resultSet, i) -> mapRow(resultSet));
         return comments;
     }
 
@@ -90,11 +87,7 @@ public class CommentDAO {
         String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
-        if (comments.size() > 0) {
-            return comments;
-        } else {
-            return null;
-        }
+        return comments;
     }
 
     private List<Comment> getAllByComment(Comment comment) {

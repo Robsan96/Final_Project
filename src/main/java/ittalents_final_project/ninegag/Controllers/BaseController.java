@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,13 +36,11 @@ public abstract class BaseController {
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
-
-//
-//    @ExceptionHandler({SQLException.class})
-//    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ErrorMsg handleMySQL(Exception e) {
-//        return new ErrorMsg("Error in the DataBase query", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
-//    }
+    @ExceptionHandler({SQLException.class})
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMsg handleMySQL(Exception e) {
+        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
+    }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
@@ -63,7 +62,7 @@ public abstract class BaseController {
         }
     }
 
-    protected boolean validateAdmin(HttpSession session) throws NotLoggedException{
+    protected boolean validateAdmin(HttpSession session) throws NotLoggedException {
         if (session.getAttribute(LOGGED) == null) {
             throw new NotLoggedException("Not Logged");
         } else {
@@ -74,7 +73,7 @@ public abstract class BaseController {
         }
     }
 
-    protected boolean validatePassword(String password){
+    protected boolean validatePassword(String password) {
         String pattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=*()-_<>])(?=\\S+$).{8,}$";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(password);
