@@ -1,15 +1,21 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
+import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
+import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.*;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -18,14 +24,14 @@ public class SectionDAO {
     static Logger log = Logger.getLogger(SectionDAO.class.getName());
 
     @Autowired
-    NamedParameterJdbcTemplate jd;
+    private PostDAO daoP;
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
     public static final String SQL = "SELECT section_id , section_name FROM sections";
 
     public List<Section> getAll() {
         try {
-            return jd.query(SQL, (resultSet, i) -> mapRow(resultSet));
+            return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
         } catch (EmptyResultDataAccessException e) {
             log.error(e.getMessage());
             return null;
@@ -59,8 +65,24 @@ public class SectionDAO {
     }
 
     public int addSection(String name) {
-        String sql = "INSERT INTO sections(section_name) VALUES(?)";
-        return jdbcTemplate.update(sql, new Object[]{name});
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO sections(section_name) VALUES(?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, name);
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().intValue();
+    }
+
+    @Transactional
+    public int deleteSection(Section section) {
+        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId());
+        for (ResponsePostDTO post : posts) {
+            daoP.removePost(post);
+        }
+        jdbcTemplate.update("DELETE FROM sections WHERE section_id=?", new Object[]{section.getId()});
+        return section.getId();
     }
 }
 

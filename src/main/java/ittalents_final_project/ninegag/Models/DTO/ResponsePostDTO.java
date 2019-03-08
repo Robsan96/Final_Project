@@ -1,6 +1,7 @@
 package ittalents_final_project.ninegag.Models.DTO;
 
 import ittalents_final_project.ninegag.Models.POJO.Post;
+import ittalents_final_project.ninegag.Models.POJO.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class ResponsePostDTO extends Post {
 
     private int commentsCounter;
     private int votePoints;
+    private List<Tag> tags;
     private List<ResponseCommentDTO> allComments;
 
     public ResponsePostDTO(int postID, int profileID, String title, String contentURL, int sectionID,

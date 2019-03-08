@@ -5,13 +5,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -20,21 +24,31 @@ public class CommentDAO {
     static Logger log = Logger.getLogger(CommentDAO.class.getName());
 
     @Autowired
-    JdbcTemplate jdbcTemplate;
-    private static final String SELECT_COMMENT = "SELECT comment_ID , c.content,c.post_ID,c.profile_ID," +
+    private JdbcTemplate jdbcTemplate;
+
+    private static final String SELECT_COMMENT = "SELECT c.comment_ID , c.content,c.post_ID,c.profile_ID," +
             "c.reply_of_ID,c.date_time_created,(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID " +
             "AND status=1 -(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID AND status=0)) AS votes" +
             ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
             ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
     public int addComment(Comment comment) {
-        String sql = "INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)";
-        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent()});
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement("INSERT INTO comments(post_ID,profile_ID,content) VALUES(?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, comment.getPost());
+            ps.setInt(2, comment.getProfile());
+            ps.setString(3, comment.getContent());
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().intValue();
     }
 
     public int addReply(Comment comment) {
         String sql = "INSERT INTO comments(post_ID,profile_ID,content,reply_of_ID) VALUES(?,?,?,?)";
-        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent(), comment.getReply()});
+        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(),
+                comment.getContent(), comment.getReply()});
     }
 
     public Comment getById(int id) {
@@ -64,22 +78,17 @@ public class CommentDAO {
     }
 
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
-        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY votes DESC";
+        String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
-        if (comments.size() > 0) {
-            return comments;
-
-        } else {
-            return null;
-        }
+        return comments;
     }
 
     public List<Comment> getAllByPost(Post post) {
 
         String sql = "SELECT * FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
-                                                   (resultSet, i) -> mapRowR(resultSet));
+                (resultSet, i) -> mapRow(resultSet));
         return comments;
     }
 
@@ -94,19 +103,15 @@ public class CommentDAO {
     }
 
     public List<ResponseCommentDTO> getAllFreshByPostDTO(int postId) {
-        String sql = SELECT_COMMENT + "WHERE post_ID=? ORDER BY date_time_created DESC";
+        String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
                 (resultSet, i) -> mapRowR(resultSet));
-        if (comments.size() > 0) {
-            return comments;
-        } else {
-            return null;
-        }
+        return comments;
     }
 
     private List<Comment> getAllByComment(Comment comment) {
         String sql = "SELECT * FROM comments WHERE reply_of_ID=? ORDER BY date_time_created DESC";
-        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRowR(resultSet));
+        List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRow(resultSet));
         return comments;
     }
 

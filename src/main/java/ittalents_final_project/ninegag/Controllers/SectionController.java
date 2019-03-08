@@ -2,9 +2,7 @@ package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
 import ittalents_final_project.ninegag.Models.POJO.Section;
-import ittalents_final_project.ninegag.Utils.Exceptions.AlreadyExistsException;
-import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
-import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
+import ittalents_final_project.ninegag.Utils.Exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,47 +29,63 @@ public class SectionController extends BaseController {
     }
 
     @GetMapping(value = "/id/{value}")
-    public Section showSection(@PathVariable(value = "value") int id, HttpSession session) throws NotLoggedException, PermitionDeniedException {
+    public Section showSection(@PathVariable(value = "value") int id, HttpSession session)
+            throws NotLoggedException, NotAdminException, BadParamException {
         if (validateAdmin(session)) {
             Section section = dao.getById(id);
             if (section == null) {
-                throw new NullPointerException("Section with that id does not exist");
+                throw new BadParamException("Section with that id does not exist");
             } else {
                 return section;
             }
         } else {
-            throw new PermitionDeniedException("You dont have access to that option");
+            throw new NotAdminException();
+
         }
     }
 
     @GetMapping(value = "/{name}")
-    public Section showSection(@PathVariable(value = "name") String name, HttpSession session) throws NotLoggedException, PermitionDeniedException {
+    public Section showSection(@PathVariable(value = "name") String name, HttpSession session)
+            throws NotLoggedException, NotAdminException, BadParamException {
         if (validateAdmin(session)) {
             Section section = dao.getByName(name);
             if (section == null) {
-                throw new NullPointerException("Section with that name does not exist");
+                throw new BadParamException("Section with that name does not exist");
             } else {
                 return section;
+            }
+        } else {
+            throw new NotAdminException();
+        }
+    }
+
+    @PostMapping(value = "/add")
+    public String addSection(@RequestBody Section section, HttpSession session)
+            throws AlreadyExistsException, NotLoggedException, PermitionDeniedException, BadParamException {
+        if (validateAdmin(session)) {
+            if (section.getName().isEmpty() || section.getName() == null) {
+                throw new BadParamException("Name cant be empty");
+            }
+            if (dao.getByName(section.getName()) == null) {
+                return "Section was added with ID -> " + dao.addSection(section.getName());
+            } else {
+                throw new AlreadyExistsException("This section already exist !");
             }
         } else {
             throw new PermitionDeniedException("You dont have access to that option");
         }
     }
 
-    @PostMapping(value = "/{name}")
-    public String addSection(@PathVariable(value = "name") String name, HttpSession session) throws AlreadyExistsException, NotLoggedException, PermitionDeniedException {
-        if (validateAdmin(session)) {
-            if (dao.getByName(name) == null) {
-                if (dao.addSection(name) == 1) {
-                    return "Section added successfully";
-                } else {
-                    return "Section was not added for some reason,pls try again or contact the programer";
-                }
-            } else {
-                throw new AlreadyExistsException("This already exist !");
-            }
+    @DeleteMapping(value = "/delete")
+    public String deleteSection(@RequestBody Section section, HttpSession session)
+            throws NotAdminException, NotLoggedException, BadParamException {
+        if (!validateAdmin(session)) {
+            throw new NotAdminException();
+        }
+        if (dao.getById(section.getId()) == null) {
+            throw new BadParamException("Section with that id does not exist!");
         } else {
-            throw new PermitionDeniedException("You dont have acces to that option");
+            return "Section with ID " + dao.deleteSection(section) + " deleted";
         }
     }
 }

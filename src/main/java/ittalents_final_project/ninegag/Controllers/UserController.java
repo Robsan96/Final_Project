@@ -6,6 +6,10 @@ import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.*;
+import ittalents_final_project.ninegag.Utils.Exceptions.InvalidPasswordException;
+import ittalents_final_project.ninegag.Utils.Exceptions.NotAdminException;
+import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
+import ittalents_final_project.ninegag.Utils.Exceptions.WrongEmailOrPasswordException;
 import ittalents_final_project.ninegag.Utils.PasswordUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -74,11 +78,12 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/updateUserAdmin")
-    public void updateUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException, PermitionDeniedException {
+    public void updateUserAdmin(@RequestBody User user, HttpSession session)
+            throws NotLoggedException, NotAdminException {
         if (validateAdmin(session)) {
             dao.updateUserByEmail(user);
         } else {
-            throw new PermitionDeniedException("You are not admin");
+            throw new NotAdminException("You dont have acces to that option");
         }
     }
 
@@ -89,34 +94,38 @@ public class UserController extends BaseController {
         dao.deleteUserByID(user.getUser_ID());
     }
 
+
     @DeleteMapping(value = "/deleteUserAdmin")
-    public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException {
-        validateAdmin(session);
-        dao.deleteUserByEmail(user.getEmail());
+    public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException, NotAdminException {
+        if (validateAdmin(session)) {
+            dao.deleteUserByEmail(user.getEmail());
+        } else {
+            throw new NotAdminException("You dont have acces to that option");
+        }
     }
 
-    @GetMapping(value="/user/posts/{id}")
-    public UserPostsDTO getUserPosts(@PathVariable(value = "id") int user_ID){
+    @GetMapping(value = "/user/posts/{id}")
+    public UserPostsDTO getUserPosts(@PathVariable(value = "id") int user_ID) {
         UserPostsDTO userPosts = dao.getUserPosts(user_ID);
-        if(userPosts==null){
+        if (userPosts == null) {
             throw new NullPointerException("No posts for this user.");
         }
         return userPosts;
     }
 
-    @GetMapping(value="/user/comments/{id}")
-    public UserCommentsDTO getUserCommentedPosts(@PathVariable(value = "id") int user_ID){
+    @GetMapping(value = "/user/comments/{id}")
+    public UserCommentsDTO getUserCommentedPosts(@PathVariable(value = "id") int user_ID) {
         UserCommentsDTO userCommentedPosts = dao.getUserCommentedPosts(user_ID);
-        if(userCommentedPosts==null){
+        if (userCommentedPosts == null) {
             throw new NullPointerException("No posts for this user.");
         }
         return userCommentedPosts;
     }
 
-    @GetMapping(value="/user/upvotes/{id}")
-    public UserUpvotesDTO getUserUpvotedPosts(@PathVariable(value = "id") int user_ID){
+    @GetMapping(value = "/user/upvotes/{id}")
+    public UserUpvotesDTO getUserUpvotedPosts(@PathVariable(value = "id") int user_ID) {
         UserUpvotesDTO userUpvotedPosts = dao.getUserUpvotedPosts(user_ID);
-        if(userUpvotedPosts==null){
+        if (userUpvotedPosts == null) {
             throw new NullPointerException("No posts for this user.");
         }
         return userUpvotedPosts;
