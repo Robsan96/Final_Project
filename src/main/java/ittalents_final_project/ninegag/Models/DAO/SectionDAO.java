@@ -3,6 +3,7 @@ package ittalents_final_project.ninegag.Models.DAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.Section;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.*;
@@ -17,6 +18,8 @@ import java.util.List;
 @Component
 public class SectionDAO {
 
+    static Logger log = Logger.getLogger(SectionDAO.class.getName());
+
     @Autowired
     private PostDAO daoP;
     @Autowired
@@ -27,6 +30,7 @@ public class SectionDAO {
         try {
             return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -37,6 +41,7 @@ public class SectionDAO {
             Section section = jdbcTemplate.queryForObject(sql, new Object[]{section_name}, (resultSet, i) -> mapRow(resultSet));
             return section;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -47,6 +52,7 @@ public class SectionDAO {
             Section section = jdbcTemplate.queryForObject(sql, new Object[]{id}, (resultSet, i) -> mapRow(resultSet));
             return section;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }

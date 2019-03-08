@@ -1,4 +1,5 @@
 package ittalents_final_project.ninegag.Utils;
+import org.apache.log4j.Logger;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -10,6 +11,8 @@ import java.util.Base64;
 import java.util.Random;
 
 public class PasswordUtils {
+
+    static Logger log = Logger.getLogger(PasswordUtils.class.getName());
 
     private static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -31,6 +34,7 @@ public class PasswordUtils {
             SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
             return skf.generateSecret(spec).getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            log.error(e.getMessage());
             throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
         } finally {
             spec.clearPassword();

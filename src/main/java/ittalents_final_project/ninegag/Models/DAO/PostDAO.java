@@ -4,21 +4,24 @@ import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
 public class PostDAO {
+
+    static Logger log = Logger.getLogger(PostDAO.class.getName());
 
     public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID, " +
             "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
@@ -42,6 +45,7 @@ public class PostDAO {
                     "date_time_created, see_sensitive, attribute_poster FROM posts WHERE post_ID=?";
             return jdbcTemplate.queryForObject(sql, new Object[]{Id}, ((resultSet, i) -> mapRow(resultSet)));
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -58,6 +62,7 @@ public class PostDAO {
             }
             return post;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -71,6 +76,7 @@ public class PostDAO {
             }
             return posts;
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -110,7 +116,7 @@ public class PostDAO {
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         try {
             String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID," +
-                    "     p.date_time_created, p.seeSensitive, p.attribute_poster, (SELECT COUNT(*)" +
+                    "     p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
                     "     FROM comments  WHERE post_ID=p.post_ID )AS comments," +
                     "     (SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
                     "      FROM post_likes WHERE post_id=p.post_ID AND status=1)AS votes " +
@@ -127,6 +133,7 @@ public class PostDAO {
                 return null;
             }
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -155,6 +162,7 @@ public class PostDAO {
         if (posts.size() > 0) {
             return posts;
         } else {
+            log.error("Empty list in get allposts ");
             return null;
         }
     }

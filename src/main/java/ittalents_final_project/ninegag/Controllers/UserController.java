@@ -85,7 +85,7 @@ public class UserController extends BaseController {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         dao.deleteUserByID(user.getUser_ID());
-    }
+        }
 
     @DeleteMapping(value = "/deleteUserAdmin")
     public void deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException, NotAdminException {

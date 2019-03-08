@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.apache.log4j.Logger;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import java.sql.SQLException;
@@ -18,39 +18,47 @@ import java.util.regex.Pattern;
 @RestController
 public abstract class BaseController {
 
+static Logger log = Logger.getLogger(BaseController.class.getName());
+
     @ExceptionHandler({MessagingException.class, NullPointerException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMsg handleEmptyResult(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({NotLoggedException.class, NotAdminException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingOrAdminStatus(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({SQLException.class})
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMsg handleMySQL(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleInvalidPassword(Exception e) {
+        log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 

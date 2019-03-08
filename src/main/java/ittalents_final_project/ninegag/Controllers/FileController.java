@@ -8,6 +8,7 @@ import ittalents_final_project.ninegag.Models.POJO.Tag;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Base64;
 @RestController
 public class FileController extends BaseController {
 
+
     @Autowired
     UserDAOImplem daoU;
     @Autowired
@@ -29,7 +31,11 @@ public class FileController extends BaseController {
     @Autowired
     TagDAO daoT;
 
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
+    static Logger log = Logger.getLogger(FileController.class.getName());
+
+
+    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
+
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
     @PostMapping(value = "/images/profiles")
@@ -39,18 +45,20 @@ public class FileController extends BaseController {
         if (url.isEmpty() || url == null) {
             throw new NullPointerException("URL is not valid or empty!");
         }
-        String base64 = url;
+        byte[] base64 = url.getBytes();
         User user = (User) session.getAttribute(LOGGED);
-        byte[] bytes = Base64.getDecoder().decode(base64);
+        String encoded = Base64.getEncoder().encodeToString(base64);
+        base64=Base64.getDecoder().decode(encoded);
         String fileName = user.getEmail() + FILE_NAME;
         File newFile = new File(FILE_PATH + fileName);
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
-            fos.write(bytes);
+            fos.write(base64);
             user.setAvatar(newFile.getName());
 
             daoU.updateUserByID(user);
 
         } catch (IOException e) {
+            log.error(e.getMessage());
             System.out.println("Error in uploading avatar!");
         }
     }
@@ -92,7 +100,7 @@ public class FileController extends BaseController {
 
     @GetMapping(value = "/images/{name}", produces = "image/png")
     public byte[] downloadImage(@PathVariable(value = "name") String imageName) throws Exception {
-        File newFile = new File(FILE_PATH + imageName);
+        File newFile = new File(FILE_PATH + imageName+".jpg");
         if (!newFile.exists()) {
             throw new EmptyParameterException("Oop file with that name does not exist !");
         }
@@ -100,6 +108,7 @@ public class FileController extends BaseController {
             byte[] bytes = Files.readAllBytes(newFile.toPath());
             return bytes;
         } catch (IOException e) {
+            log.error(e.getMessage());
             throw new Exception("Something rly got out of hand ! this msg shoud not be displayed ever !");
         }
     }

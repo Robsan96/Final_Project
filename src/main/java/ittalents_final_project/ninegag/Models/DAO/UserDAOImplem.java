@@ -4,6 +4,7 @@ import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,6 +18,8 @@ import java.sql.SQLException;
 
 @Repository
 public class UserDAOImplem implements UserDAO {
+
+    static Logger log = Logger.getLogger(UserDAOImplem.class.getName());
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     @Autowired
@@ -196,8 +199,8 @@ public class UserDAOImplem implements UserDAO {
             userCommentedPosts.setCommentedPosts(dao.getAllPostsCommentedBy(userCommentedPosts.getUser_ID()));
             return userCommentedPosts;
         }
-        catch (
-            EmptyResultDataAccessException e) {
+        catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -209,8 +212,8 @@ public class UserDAOImplem implements UserDAO {
             userPosts.setUploadedPosts(dao.getAllPostsByUser(userPosts.getUser_ID()));
             return userPosts;
         }
-        catch (
-                EmptyResultDataAccessException e) {
+        catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -222,8 +225,8 @@ public class UserDAOImplem implements UserDAO {
             userUpvotes.setLikedPosts(dao.getAllPostsVotedBy(userUpvotes.getUser_ID()));
             return userUpvotes;
         }
-        catch (
-                EmptyResultDataAccessException e) {
+        catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }

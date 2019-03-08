@@ -1,6 +1,7 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Component
 public class CommentDAO {
+
+    static Logger log = Logger.getLogger(CommentDAO.class.getName());
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -31,7 +35,8 @@ public class CommentDAO {
 
     public int addReply(Comment comment) {
         String sql = "INSERT INTO comments(post_ID,profile_ID,content,reply_of_ID) VALUES(?,?,?,?)";
-        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(), comment.getContent(), comment.getReply()});
+        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(),
+                comment.getContent(), comment.getReply()});
     }
 
     public Comment getById(int id) {
@@ -43,6 +48,7 @@ public class CommentDAO {
             return comment;
 
         } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
             return null;
         }
     }
@@ -67,6 +73,7 @@ public class CommentDAO {
     }
 
     public List<Comment> getAllByPost(Post post) {
+
         String sql = "SELECT * FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
                 (resultSet, i) -> mapRow(resultSet));

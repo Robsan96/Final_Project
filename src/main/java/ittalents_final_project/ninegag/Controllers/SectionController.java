@@ -40,6 +40,7 @@ public class SectionController extends BaseController {
             }
         } else {
             throw new NotAdminException();
+
         }
     }
 
