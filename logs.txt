@@ -1,0 +1,54 @@
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Couldn't connect to host, port: smtp.gmail.com, 587; timeout -1
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Couldn't connect to host, port: smtp.gmail.com, 587; timeout -1
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-08--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO-63:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:There are no comment with that id !
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:Comment field 'content' is empty(null) or wrong written!
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-48:Error in uploading post image or profile avatar!
+2019-03-08--ERROR-ittalents_final_project.ninegag.Models.DAO.TagDAO-33:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Models.DAO.TagDAO-33:Incorrect result size: expected 1, actual 0
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:Posts with that sectionId does not exist!
+2019-03-08--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-27:
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-27:
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:You have already registered with this email or username.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:You have already registered with this email or username.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-76:Password must be 8 characters or more, have at least one upper and lower case character and have at least 1 special character and digit and no spaces.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:You have already registered with this email or username.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-62:Wrong username or password.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:You have already registered with this email or username.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-34:You have already registered with this email or username.
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-09--ERROR-ittalents_final_project.ninegag.Controllers.EmailController-62:Invalid Addresses

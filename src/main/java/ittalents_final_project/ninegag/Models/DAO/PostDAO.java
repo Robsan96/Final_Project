@@ -23,7 +23,7 @@ public class PostDAO {
 
     static Logger log = Logger.getLogger(PostDAO.class.getName());
 
-    public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID, " +
+    public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.user_ID, s.section_ID, " +
             "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
             "FROM comments  WHERE post_ID=p.post_ID )AS comments," +
             "(SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
@@ -41,7 +41,7 @@ public class PostDAO {
 
     public Post getPostById(int Id) {
         try {
-            String sql = "SELECT post_ID, title, content_URL, profile_ID, section_ID, " +
+            String sql = "SELECT post_ID, title, content_URL, user_ID, section_ID, " +
                     "date_time_created, see_sensitive, attribute_poster FROM posts WHERE post_ID=?";
             return jdbcTemplate.queryForObject(sql, new Object[]{Id}, ((resultSet, i) -> mapRow(resultSet)));
         } catch (EmptyResultDataAccessException e) {
@@ -111,7 +111,7 @@ public class PostDAO {
 
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         try {
-            String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID," +
+            String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.user_ID, s.section_ID," +
                     "     p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
                     "     FROM comments  WHERE post_ID=p.post_ID )AS comments," +
                     "     (SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
@@ -135,7 +135,7 @@ public class PostDAO {
     }
 
     public List<ResponsePostDTO> getAllPostsMadeBy(int userId) {
-        String sql = SQL + " WHERE p.profile_ID=? ORDER BY votes DESC";
+        String sql = SQL + " WHERE p.user_ID=? ORDER BY votes DESC";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
@@ -167,7 +167,7 @@ public class PostDAO {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO posts(title,content_URL," +
-                            "profile_ID,section_ID,see_sensitive,attribute_poster) VALUES(?,?,?,?,?,?)",
+                            "user_ID,section_ID,see_sensitive,attribute_poster) VALUES(?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getContentURL());
@@ -203,7 +203,7 @@ public class PostDAO {
                         "FROM post_likes WHERE profile_id=? AND post_id=?",
                 new Object[]{userId, postId}, Integer.class) == 1) {
 
-            return jdbcTemplate.update("UPDATE post_likes SET status=? WHERE profile_id=? AND post_id=?",
+            return jdbcTemplate.update("UPDATE post_likes SET status=? WHERE user_ID=? AND post_id=?",
                     new Object[]{vote, userId, postId});
         } else {
             return jdbcTemplate.update("INSERT INTO post_likes(post_id,profile_id,status) " +
@@ -212,7 +212,7 @@ public class PostDAO {
     }
 
     private ResponsePostDTO mapRowBasicDTO(ResultSet rs) throws SQLException {
-        return new ResponsePostDTO(rs.getInt("post_ID"), rs.getInt("profile_ID"),
+        return new ResponsePostDTO(rs.getInt("post_ID"), rs.getInt("user_ID"),
                 rs.getString("title"), rs.getString("content_URL"),
                 rs.getInt("section_ID"), rs.getString("date_time_created"),
                 rs.getBoolean("see_sensitive"), rs.getBoolean("attribute_poster"),
@@ -220,7 +220,7 @@ public class PostDAO {
     }
 
     private Post mapRow(ResultSet rs) throws SQLException {
-        return new Post(rs.getInt("post_ID"), rs.getInt("profile_ID"),
+        return new Post(rs.getInt("post_ID"), rs.getInt("user_ID"),
                 rs.getString("title"), rs.getString("content_URL"),
                 rs.getInt("section_ID"), rs.getString("date_time_created"),
                 rs.getBoolean("see_sensitive"), rs.getBoolean("attribute_poster"));

@@ -1,12 +1,14 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
+import ittalents_final_project.ninegag.Models.DTO.UserDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserUpvotesDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -49,6 +51,25 @@ public class UserDAOImplem implements UserDAO {
             parameterSource.addValue("avatar", user.getAvatar());
             parameterSource.addValue("sensitive_filter", user.isSensitive_filter());
             parameterSource.addValue("admin_privileges", user.isAdmin_privileges());
+        }
+        return parameterSource;
+    }
+
+    private SqlParameterSource getSqlParameterByModel(UserDTO userDTO){
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        if(userDTO != null){
+            parameterSource.addValue("user_ID", userDTO.getUser_ID());
+            parameterSource.addValue("email", userDTO.getEmail());
+            parameterSource.addValue("username", userDTO.getUsername());
+            parameterSource.addValue("full_name", userDTO.getFull_name());
+            parameterSource.addValue("birthday", userDTO.getBirthday());
+            parameterSource.addValue("gender_ID", userDTO.getGender_ID());
+            parameterSource.addValue("country_ID", userDTO.getCountry_ID());
+            parameterSource.addValue("description", userDTO.getDescription());
+            parameterSource.addValue("facebook_account", userDTO.getFacebook_account());
+            parameterSource.addValue("google_account", userDTO.getGoogle_account());
+            parameterSource.addValue("avatar", userDTO.getAvatar());
+            parameterSource.addValue("sensitive_filter", userDTO.isSensitive_filter());
         }
         return parameterSource;
     }
@@ -126,6 +147,27 @@ public class UserDAOImplem implements UserDAO {
         }
     }
 
+    private static final class UserDTOMapper implements RowMapper {
+
+        public UserDTO mapRow(ResultSet rs, int rowNum) throws SQLException {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUser_ID(rs.getInt("user_ID"));
+            userDTO.setEmail(rs.getString("email"));
+            userDTO.setUsername(rs.getString("username"));
+            userDTO.setFull_name(rs.getString("full_name"));
+            userDTO.setBirthday(rs.getDate("birthday"));
+            userDTO.setGender_ID(rs.getInt("gender_ID"));
+            userDTO.setCountry_ID(rs.getInt("country_ID"));
+            userDTO.setDescription(rs.getString("description"));
+            userDTO.setFacebook_account(rs.getString("facebook_account"));
+            userDTO.setGoogle_account(rs.getString("google_account"));
+            userDTO.setAvatar(rs.getString("avatar"));
+            userDTO.setSensitive_filter(rs.getBoolean("sensitive_filter"));
+
+            return userDTO;
+        }
+    }
+
     private static final class UserCommentsDTOMapper implements RowMapper {
 
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -157,13 +199,15 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public void updateUserByID(User user) {
-        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
+        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday," +
+                " country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
     public void updateUserByEmail(User user) {
-        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday, country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE email = :email";
+        String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday," +
+                " country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE email = :email";
 
         namedParameterJdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
@@ -182,7 +226,6 @@ public class UserDAOImplem implements UserDAO {
 
     public User findUserByEmail(String email) {
         String sql = "SELECT * FROM users WHERE email = :email";
-
         return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new UserMapper());
     }
 
@@ -192,10 +235,10 @@ public class UserDAOImplem implements UserDAO {
         return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(username)), new UserMapper());
     }
 
-    public Object findUserByID(int user_ID) {
+    public User findUserByID(int user_ID) {
         String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
 
-        return namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
+        return (User)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
     }
 
     public UserCommentsDTO getUserCommentedPosts(int user_ID){
@@ -235,5 +278,11 @@ public class UserDAOImplem implements UserDAO {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+    public UserDTO getUserInfo(String email){
+        String sql = "SELECT * FROM users WHERE email = :email";
+        UserDTO userDTO = (UserDTO)namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserDTO(email)), new UserDTOMapper());
+        return  userDTO;
     }
 }

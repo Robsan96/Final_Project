@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+
 
 @Getter
 @Setter
@@ -36,6 +38,25 @@ public class User {
 
     public User(String email) {
         this.email = email;
+    }
+
+    public User(int user_ID, String email, String username, String full_name, Date date_created, Date birthday, int gender_ID,
+                int country_ID, String description, String facebook_account, String google_account, String avatar,
+                boolean sensitive_filter, boolean admin_privileges) {
+        this.user_ID = user_ID;
+        this.email = email;
+        this.username = username;
+        this.full_name = full_name;
+        this.date_created = date_created;
+        this.birthday = birthday;
+        this.gender_ID = gender_ID;
+        this.country_ID = country_ID;
+        this.description = description;
+        this.facebook_account = facebook_account;
+        this.google_account = google_account;
+        this.avatar = avatar;
+        this.sensitive_filter = sensitive_filter;
+        this.admin_privileges = admin_privileges;
     }
 
     @Override

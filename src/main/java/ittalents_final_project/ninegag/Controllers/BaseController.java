@@ -56,11 +56,18 @@ public abstract class BaseController {
 //        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
 
-    @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
+    @ExceptionHandler({WrongEmailOrPasswordException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
         log.error(e.getMessage());
-        return new ErrorMsg("Try different username, email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({EmptyResultDataAccessException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMsg handleLoggingEmptyResult(Exception e) {
+        log.error(e.getMessage());
+        return new ErrorMsg("Try different email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})

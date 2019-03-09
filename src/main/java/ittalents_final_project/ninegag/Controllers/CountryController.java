@@ -5,21 +5,19 @@ import ittalents_final_project.ninegag.Models.POJO.Country;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
 @RestController
+@RequestMapping(value = "/Country")
 public class CountryController extends BaseController{
 
     @Autowired
     CountryDAOImplem dao;
 
 
-    @PostMapping(value = "/add/Country")
+    @PostMapping(value = "/add")
     public void addCountry(@RequestBody Country country, HttpSession session) throws NotLoggedException, PermitionDeniedException {
         if (validateAdmin(session)) {
             dao.addCountry(country);
@@ -28,7 +26,7 @@ public class CountryController extends BaseController{
         }
     }
 
-    @DeleteMapping(value = "/delete/Country")
+    @DeleteMapping(value = "/delete")
     public void removeCountry(@RequestBody Country country, HttpSession session) throws NotLoggedException, PermitionDeniedException {
         if (validateAdmin(session)) {
             dao.deleteCountryByID(country.getCountry_ID());

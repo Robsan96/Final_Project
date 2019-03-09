@@ -38,7 +38,7 @@ public class FileController extends BaseController {
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
+    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
