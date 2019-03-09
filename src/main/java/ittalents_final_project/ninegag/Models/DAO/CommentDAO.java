@@ -77,6 +77,7 @@ public class CommentDAO {
         return comment.getId();
     }
 
+
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
         String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},

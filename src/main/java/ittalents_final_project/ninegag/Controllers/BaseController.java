@@ -67,7 +67,7 @@ public abstract class BaseController {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingEmptyResult(Exception e) {
         log.error(e.getMessage());
-        return new ErrorMsg("Try different email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ErrorMsg("Not found.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})

@@ -109,9 +109,9 @@ public class UserController extends BaseController {
     @DeleteMapping(value = "/deleteUserAdmin")
     public int deleteUserAdmin(@RequestBody User user, HttpSession session) throws NotLoggedException, NotAdminException {
         if (validateAdmin(session)) {
-            User toBeDeleted = dao.findUserByEmail(user.getEmail());
+            User toBeDeleted = dao.findUserByID(user.getUser_ID());
             int id = toBeDeleted.getUser_ID();
-            dao.deleteUserByEmail(user.getEmail());
+            dao.deleteUserByID(id);
             return id;
         } else {
             throw new NotAdminException("You dont have access to that option.");

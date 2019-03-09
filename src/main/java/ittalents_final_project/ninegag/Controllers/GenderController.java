@@ -5,6 +5,7 @@ import ittalents_final_project.ninegag.Models.POJO.Gender;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -16,7 +17,6 @@ public class GenderController extends BaseController {
 
     @Autowired
     GenderDAOImplem dao;
-
 
     @PostMapping(value = "/add")
     public void addGender(@RequestBody Gender gender, HttpSession session) throws NotLoggedException, PermitionDeniedException{
