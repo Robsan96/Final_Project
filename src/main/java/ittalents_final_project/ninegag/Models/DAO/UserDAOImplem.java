@@ -66,12 +66,12 @@ public class UserDAOImplem implements UserDAO {
 //        JdbcTemplate.update("DELETE FROM users WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
 //    }
 //
-//    public void deleteCommentsByUser(int user_ID){
+//    private void deleteCommentsByUser(int user_ID){
 //        JdbcTemplate.update("DELETE FROM comments_likes WHERE profile_ID= :profile_ID", getSqlParameterByModel(new CommentLikes(user_ID)));
 //        JdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID= :reply_of_ID AND profile_ID= :profile_ID", getSqlParameterByModel(new Comment(user_ID,user_ID)));
 //    }
 //
-//    public void deletePostsByUser(int user_ID){
+//    private void deletePostsByUser(int user_ID){
 //        List<ResponsePostDTO> posts = postDAO.getAllPostsByUser(user_ID);
 //        List<Integer> postID = new ArrayList();
 //        for (ResponsePostDTO r: posts){
@@ -106,6 +106,12 @@ public class UserDAOImplem implements UserDAO {
         String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
 
         return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
+    }
+
+    public void changePassword(int user_ID, String newPassword){
+        String sql = "UPDATE users SET password = :password WHERE user_ID = :user_ID";
+
+        JdbcTemplate.update(sql, getSqlParameterByModel(new User(user_ID, newPassword)));
     }
 
     public UserCommentsDTO getUserCommentedPosts(int user_ID){

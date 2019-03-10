@@ -1,0 +1,2 @@
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-42:You are not logged in.
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-42:You are not logged in.

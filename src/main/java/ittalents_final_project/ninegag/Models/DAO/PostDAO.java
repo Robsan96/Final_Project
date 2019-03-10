@@ -76,14 +76,17 @@ public class PostDAO {
         return posts;
     }
 
-    public List<ResponsePostDTO> getAllPostsByTag(int tag,String orderd) {
+    public List<ResponsePostDTO> getAllPostsByTag(int tag, String orderd) {
         String sql = SQL + " JOIN post_tags t ON(p.post_ID=t.post_id) WHERE t.tag_id=? ";
         switch (orderd) {
-            case "hot": sql+="ORDER BY votes DESC";
+            case "hot":
+                sql += "ORDER BY votes DESC";
                 break;
-                case "fresh": sql += "ORDER BY date_time_created DESC";
+            case "fresh":
+                sql += "ORDER BY date_time_created DESC";
                 break;
-            default: sql += "ORDER BY votes DESC";
+            default:
+                sql += "ORDER BY votes DESC";
         }
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{tag}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
@@ -93,13 +96,16 @@ public class PostDAO {
     }
 
     public List<ResponsePostDTO> getAllPostsBySection(int sectionId, String orderd) {
-        String sql = SQL+"WHERE p.section_ID=? ";
+        String sql = SQL + "WHERE p.section_ID=? ";
         switch (orderd) {
-            case "hot": sql+="ORDER BY votes DESC";
+            case "hot":
+                sql += "ORDER BY votes DESC";
                 break;
-            case "fresh": sql += "ORDER BY date_time_created DESC";
+            case "fresh":
+                sql += "ORDER BY date_time_created DESC";
                 break;
-            default: sql += "ORDER BY votes DESC";
+            default:
+                sql += "ORDER BY votes DESC";
         }
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{sectionId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));

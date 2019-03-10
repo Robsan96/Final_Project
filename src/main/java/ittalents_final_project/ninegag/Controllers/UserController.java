@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 
 @RestController
+@RequestMapping(value = "/user")
 public class UserController extends BaseController {
 
     public static final String LOGGED = "logged";
@@ -47,7 +48,8 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/register")
-    public UserDTO saveUser(@RequestBody User user, HttpSession session) throws MessagingException, InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException {
+    public UserDTO saveUser(@RequestBody User user, HttpSession session)
+            throws  InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException {
         try {
             if (dao.findUserByEmail(user.getEmail()) != null || dao.findUserByUsername(user.getUsername()) != null) {
                 throw new AlreadyExistsException("You have already registered with this email or username.");
@@ -55,10 +57,7 @@ public class UserController extends BaseController {
         }
         catch (EmptyResultDataAccessException e){
             if (validatePassword(user.getPassword())) {
-                String salt = PasswordUtils.getSalt(30);
-                String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
-                user.setPassword(securedPassword);
-                user.setSalt(salt);
+                setPassword(user);
                 dao.addUser(user);
                 EmailController email = new EmailController();
                 email.setEmail(user.getEmail());
@@ -118,7 +117,26 @@ public class UserController extends BaseController {
         }
     }
 
-    @GetMapping(value = "/user/posts/{id}")
+    @PostMapping(value = "/changePassword")
+    public String changePassword(@RequestBody User user, HttpSession session)throws NotLoggedException{
+        validateLogged(session);
+        if(validatePassword(user.getNewPassword())){
+            user.setPassword(user.getNewPassword());
+            setPassword(user);
+            user.setNewPassword(null);
+            return "Password changed successfully.";
+        }
+        return null;
+    }
+
+    public void setPassword(User user){
+        String salt = PasswordUtils.getSalt(30);
+        String securedPassword = PasswordUtils.generateSecurePassword(user.getPassword(), salt);
+        user.setPassword(securedPassword);
+        user.setSalt(salt);
+    }
+
+    @GetMapping(value = "/posts/{id}")
     public UserPostsDTO getUserPosts(@PathVariable(value = "id") int user_ID) {
         UserPostsDTO userPosts = dao.getUserPosts(user_ID);
         if (userPosts == null) {
@@ -127,7 +145,7 @@ public class UserController extends BaseController {
         return userPosts;
     }
 
-    @GetMapping(value = "/user/comments/{id}")
+    @GetMapping(value = "/comments/{id}")
     public UserCommentsDTO getUserCommentedPosts(@PathVariable(value = "id") int user_ID) {
         UserCommentsDTO userCommentedPosts = dao.getUserCommentedPosts(user_ID);
         if (userCommentedPosts == null) {
@@ -136,7 +154,7 @@ public class UserController extends BaseController {
         return userCommentedPosts;
     }
 
-    @GetMapping(value = "/user/upvotes/{id}")
+    @GetMapping(value = "/upvotes/{id}")
     public UserUpvotesDTO getUserUpvotedPosts(@PathVariable(value = "id") int user_ID) {
         UserUpvotesDTO userUpvotedPosts = dao.getUserUpvotedPosts(user_ID);
         if (userUpvotedPosts == null) {

@@ -51,11 +51,12 @@ public class CommentDAO {
                 comment.getContent(), comment.getReply()});
     }
 
-    public Comment getById(int id) {
+    public ResponseCommentDTO getById(int id) {
         try {
             String sql = SELECT_COMMENT + "WHERE comment_ID=?";
 
-            Comment comment = jdbcTemplate.queryForObject(sql, new Object[]{id}, ((resultSet, i) -> mapRow(resultSet)));
+            ResponseCommentDTO comment = jdbcTemplate.queryForObject(sql, new Object[]{id},
+                    ((resultSet, i) -> mapRowR(resultSet)));
 
             return comment;
 
@@ -65,7 +66,7 @@ public class CommentDAO {
         }
     }
 
-    @Transactional(rollbackFor=Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public int deleteComment(Comment comment) {
         List<Comment> coments = this.getAllByComment(comment);
         for (Comment coment1 : coments) {
@@ -77,7 +78,6 @@ public class CommentDAO {
         return comment.getId();
     }
 
-
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
         String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
@@ -87,11 +87,11 @@ public class CommentDAO {
 
     public List<Comment> getAllByPost(Post post) {
 
-        String sql = "SELECT * FROM comments WHERE post_ID=? ";
+        String sql = "SELECT comment_ID FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
                 (resultSet, i) -> mapRow(resultSet));
         return comments;
-    }
+    } // Using this method for deleting !
 
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
         String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
@@ -134,13 +134,6 @@ public class CommentDAO {
                 "SET content=?" +
                 "WHERE comment_ID=?";
         return jdbcTemplate.update(sql, new Object[]{comment.getContent(), comment.getId()});
-    }
-
-    public int getAllVotes(int comentId) {
-        String sql = "SELECT COUNT(*)-(SELECT COUNT(*)FROM comments_likes WHERE comment_ID=? AND status=0)AS points " +
-                "FROM comments_likes WHERE comment_ID=? AND status=1";
-        int i = jdbcTemplate.queryForObject(sql, new Object[]{comentId, comentId}, Integer.class);
-        return i;
     }
 
     private Comment mapRow(ResultSet rs) throws SQLException {

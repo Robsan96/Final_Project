@@ -23,10 +23,10 @@ public class UserUpvotesDTO extends User {
         this.likedPosts = new ArrayList<>();
     }
 
-    public UserUpvotesDTO(int user_ID, String email, String username, String password, String salt, String full_name, Date date_created,
+    public UserUpvotesDTO(int user_ID, String email, String username, String full_name, Date date_created,
                         Date birthday, int gender_ID, int country_ID, String description, String facebook_account, String google_account,
                         String avatar, boolean sensitive_filter, boolean admin_privileges) {
-        super(user_ID, email, username, password, salt, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account, google_account, avatar, sensitive_filter, admin_privileges);
+        super(user_ID, email, username, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account, google_account, avatar, sensitive_filter, admin_privileges);
         this.likedPosts = new ArrayList<>();
     }
 

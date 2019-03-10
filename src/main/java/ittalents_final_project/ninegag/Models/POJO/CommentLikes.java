@@ -11,6 +11,6 @@ import lombok.Setter;
 @Setter
 public class CommentLikes {
 
-    int profile_ID;
+    private int profile_ID;
 
 }

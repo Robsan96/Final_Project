@@ -1,7 +1,6 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
-import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +71,7 @@ public class SectionDAO {
 
     @Transactional(rollbackFor = Exception.class)
     public int deleteSection(Section section) {
-        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId(),"fresh");
+        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId(), "fresh");
         for (ResponsePostDTO post : posts) {
             daoP.removePost(post);
         }

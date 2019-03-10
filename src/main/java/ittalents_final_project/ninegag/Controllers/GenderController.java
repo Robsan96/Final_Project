@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 
 
 @RestController
-@RequestMapping(value = "/Gender")
+@RequestMapping(value = "/gender")
 public class GenderController extends BaseController {
 
     @Autowired

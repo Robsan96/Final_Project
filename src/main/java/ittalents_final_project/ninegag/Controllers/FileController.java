@@ -46,25 +46,17 @@ public class FileController extends BaseController {
     public void upploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
             throws NotLoggedException {
         validateLogged(session);
+        User user = (User) session.getAttribute(LOGGED);
         if (url.isEmpty() || url == null) {
             throw new NullPointerException("URL is not valid or empty!");
         }
-        byte[] base64 = url.getBytes();
-        User user = (User) session.getAttribute(LOGGED);
-        String encoded = Base64.getEncoder().encodeToString(base64);
-        base64 = Base64.getDecoder().decode(encoded);
-        String fileName = user.getEmail() + FILE_NAME;
-        File newFile = new File(FILE_PATH + fileName);
-        try (FileOutputStream fos = new FileOutputStream(newFile)) {
-            fos.write(base64);
-            user.setAvatar(newFile.getName());
-
-            daoU.updateUserByID(user);
-
+        try {
+            user.setAvatar(createImage(url,user.getUsername()));
         } catch (IOException e) {
-            log.error(e.getMessage());
-            System.out.println("Error in uploading avatar!");
+            e.printStackTrace();
         }
+        daoU.updateUserByID(user);
+
     }
 
     @PostMapping(value = "posts/add")
@@ -87,7 +79,7 @@ public class FileController extends BaseController {
         if (daoS.getById(postDTO.getSectionID()) == null) {
             throw new BadParamException("Section with that ID does not exist !");
         }
-        postDTO.setContentURL(CreateImage(postDTO.getContentURL(),postDTO.getTitle()));
+        postDTO.setContentURL(createImage(postDTO.getContentURL(),postDTO.getTitle()));
         int postId = daoP.addPost(postDTO);
         if (postDTO.getTags().size() > 0 || postDTO.getTags() != null) {
             daoT.setTags(postId, postDTO.getTags());
@@ -95,7 +87,7 @@ public class FileController extends BaseController {
         return daoP.getBPostDTO(postId,true);
     }
 
-    private String CreateImage(String url,String name) throws IOException {
+    private String createImage(String url,String name) throws IOException {
         String base64 = url;
         byte[] bytes = Base64.getDecoder().decode(base64);
         String fileName = name + FILE_NAME;

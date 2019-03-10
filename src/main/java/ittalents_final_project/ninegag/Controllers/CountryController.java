@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping(value = "/Country")
+@RequestMapping(value = "/country")
 public class CountryController extends BaseController{
 
     @Autowired
