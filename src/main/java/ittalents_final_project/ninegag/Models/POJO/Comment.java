@@ -11,6 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Comment {
 
+    public Comment(int profile, int reply) {
+        this.profile = profile;
+        this.reply = reply;
+    }
+
     private int id;
     private String content;
     private int post;

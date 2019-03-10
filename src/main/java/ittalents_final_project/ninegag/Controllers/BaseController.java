@@ -31,7 +31,7 @@ public abstract class BaseController {
     @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class,
             IllegalArgumentException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public ErrorMsg handleEmptyParamExeption(Exception e) {
+    public ErrorMsg handleEmptyParamException(Exception e) {
         log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
@@ -57,11 +57,18 @@ public abstract class BaseController {
 //        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
 
-    @ExceptionHandler({WrongEmailOrPasswordException.class, EmptyResultDataAccessException.class})
+    @ExceptionHandler({WrongEmailOrPasswordException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleLoggingWrongEmailOrPassword(Exception e) {
         log.error(e.getMessage());
         return new ErrorMsg("Wrong email or password.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({EmptyResultDataAccessException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMsg handleLoggingEmptyResult(Exception e) {
+        log.error(e.getMessage());
+        return new ErrorMsg("Not found.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
     @ExceptionHandler({InvalidPasswordException.class})

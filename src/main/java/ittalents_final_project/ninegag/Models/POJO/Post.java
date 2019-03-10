@@ -11,6 +11,10 @@ import lombok.Setter;
 @Setter
 public class Post {
 
+    public Post(int profileID) {
+        this.profileID = profileID;
+    }
+
     private int postID;
     private int profileID;
     private String title;

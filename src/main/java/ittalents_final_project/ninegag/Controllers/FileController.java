@@ -38,7 +38,7 @@ public class FileController extends BaseController {
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures\\";
+    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
@@ -87,7 +87,7 @@ public class FileController extends BaseController {
         if (daoS.getById(postDTO.getSectionID()) == null) {
             throw new BadParamException("Section with that ID does not exist !");
         }
-        postDTO.setContentURL(CreateImage(postDTO));
+        postDTO.setContentURL(CreateImage(postDTO.getContentURL(),postDTO.getTitle()));
         int postId = daoP.addPost(postDTO);
         if (postDTO.getTags().size() > 0 || postDTO.getTags() != null) {
             daoT.setTags(postId, postDTO.getTags());
@@ -95,15 +95,14 @@ public class FileController extends BaseController {
         return daoP.getBPostDTO(postId,true);
     }
 
-    private String CreateImage(RequestPostDTO requestPostDTO) throws IOException {
-        String base64 = requestPostDTO.getContentURL();
+    private String CreateImage(String url,String name) throws IOException {
+        String base64 = url;
         byte[] bytes = Base64.getDecoder().decode(base64);
-        String fileName = requestPostDTO.getProfileID() + FILE_NAME;
+        String fileName = name + FILE_NAME;
         File newFile = new File(FILE_PATH + fileName);
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
             fos.write(bytes);
-            requestPostDTO.setContentURL(newFile.getName());
-            return requestPostDTO.getContentURL();
+            return newFile.getName();
         } catch (IOException e) {
             throw new IOException("Error in uploading post image or profile avatar!");
         }

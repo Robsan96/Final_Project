@@ -37,11 +37,11 @@ public class PostController extends BaseController {
 
     @GetMapping(value = "/{sectionId}")
     public List<ResponsePostDTO> getAllPostsBySection(@PathVariable(value = "sectionId") int sectionId,
-                                                      @RequestParam(value = "orderd") String orderd) throws BadParamException {
+                                                      @RequestParam(value = "ordered") String ordered) throws BadParamException {
         if (daoS.getById(sectionId) == null) {
             throw new BadParamException("Invalid section id !");
         }
-        List<ResponsePostDTO> posts = dao.getAllPostsBySection(sectionId, orderd);
+        List<ResponsePostDTO> posts = dao.getAllPostsBySection(sectionId, ordered);
         return posts;
     }
 

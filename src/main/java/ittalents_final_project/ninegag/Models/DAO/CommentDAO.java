@@ -29,7 +29,7 @@ public class CommentDAO {
     private static final String SELECT_COMMENT = "SELECT c.comment_ID , c.content,c.post_ID,c.profile_ID," +
             "c.reply_of_ID,c.date_time_created,(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID " +
             "AND status=1 -(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID AND status=0)) AS votes" +
-            ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
+            ",(SELECT COUNT(*) FROM comments c WHERE reply_of_ID=c.comment_ID)AS replies" +
             ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
     public int addComment(Comment comment) {
@@ -76,6 +76,7 @@ public class CommentDAO {
         jdbcTemplate.update("DELETE FROM comments WHERE comment_ID=?", new Object[]{comment.getId()});
         return comment.getId();
     }
+
 
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
         String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
