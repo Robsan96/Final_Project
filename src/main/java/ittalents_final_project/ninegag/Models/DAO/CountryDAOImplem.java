@@ -23,14 +23,14 @@ public class CountryDAOImplem implements CountryDAO {
 
     @Override
     public Country getByName(String country_name) {
-        String sql = "SELECT * FROM countries WHERE country_name = :country_name";
+        String sql = "SELECT country_ID, country_name FROM countries WHERE country_name = :country_name";
 
         return (Country) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Country(country_name)), new CountryDAOImplem.CountryMapper());
     }
 
     @Override
     public Country getById(int country_ID) {
-        String sql = "SELECT * FROM countries WHERE country_ID = :country_ID";
+        String sql = "SELECT country_ID, country_name FROM countries WHERE country_ID = :country_ID";
 
         return (Country) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Country(country_ID)), new CountryDAOImplem.CountryMapper());
     }

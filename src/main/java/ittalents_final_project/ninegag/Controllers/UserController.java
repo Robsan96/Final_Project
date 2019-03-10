@@ -1,5 +1,7 @@
 package ittalents_final_project.ninegag.Controllers;
 
+import ittalents_final_project.ninegag.Models.DAO.CountryDAO;
+import ittalents_final_project.ninegag.Models.DAO.GenderDAO;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserDTO;
@@ -26,6 +28,12 @@ public class UserController extends BaseController {
     public static final String LOGGED = "logged";
     @Autowired
     UserDAOImplem dao;
+
+    @Autowired
+    GenderDAO genderDAO;
+
+    @Autowired
+    CountryDAO countryDAO;
 
     @PostMapping(value = "/login")
     public UserDTO login(@RequestBody User user, HttpSession session) throws WrongEmailOrPasswordException, EmptyResultDataAccessException {
@@ -76,6 +84,8 @@ public class UserController extends BaseController {
     @PostMapping(value = "/updateUser")
     public UserDTO updateUser(@RequestBody User user, HttpSession session) throws NotLoggedException {
         validateLogged(session);
+        genderDAO.getById(user.getGender_ID());
+        countryDAO.getById(user.getCountry_ID());
         User transferUser = (User) session.getAttribute(LOGGED);
         user.setUser_ID(transferUser.getUser_ID());
         dao.updateUserByID(user);
@@ -86,6 +96,8 @@ public class UserController extends BaseController {
     public UserDTO updateUserAdmin(@RequestBody User user, HttpSession session)
             throws NotLoggedException, NotAdminException {
         if (validateAdmin(session)) {
+            genderDAO.getById(user.getGender_ID());
+            countryDAO.getById(user.getCountry_ID());
             User toBeDeleted = dao.findUserByEmail(user.getEmail());
             dao.updateUserByEmail(user);
             return dao.getUserInfo(toBeDeleted.getEmail());

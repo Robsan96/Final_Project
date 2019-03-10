@@ -23,14 +23,14 @@ public class GenderDAOImplem implements GenderDAO {
 
     @Override
     public Gender getByType(String gender_Type) {
-        String sql = "SELECT * FROM genders WHERE gender_Type = :gender_Type";
+        String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_Type = :gender_Type";
 
         return (Gender) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Gender(gender_Type)), new GenderDAOImplem.GenderMapper());
     }
 
     @Override
     public Gender getById(int gender_ID) {
-        String sql = "SELECT * FROM genders WHERE gender_ID = :gender_ID";
+        String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_ID = :gender_ID";
 
         return (Gender) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Gender(gender_ID)), new GenderDAOImplem.GenderMapper());
     }

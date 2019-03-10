@@ -80,3 +80,17 @@
 2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
 2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-48:JSON parse error: Unexpected character ('"' (code 34)): was expecting comma to separate Object entries; nested exception is com.fasterxml.jackson.core.JsonParseException: Unexpected character ('"' (code 34)): was expecting comma to separate Object entries
  at [Source: (PushbackInputStream); line: 3, column: 3]
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:Not an admin
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:Not an admin
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-48:JSON parse error: Unexpected character ('}' (code 125)): was expecting double-quote to start field name; nested exception is com.fasterxml.jackson.core.JsonParseException: Unexpected character ('}' (code 125)): was expecting double-quote to start field name
+ at [Source: (PushbackInputStream); line: 10, column: 2]
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-69:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-41:You are not logged in.
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-63:PreparedStatementCallback; SQL [DELETE FROM countries WHERE country_ID = ?]; Cannot delete or update a parent row: a foreign key constraint fails (`final_project`.`users`, CONSTRAINT `Countries_ID_FK` FOREIGN KEY (`country_ID`) REFERENCES `countries` (`country_ID`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`final_project`.`users`, CONSTRAINT `Countries_ID_FK` FOREIGN KEY (`country_ID`) REFERENCES `countries` (`country_ID`))
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-63:PreparedStatementCallback; SQL [DELETE FROM genders WHERE gender_ID = ?]; Cannot delete or update a parent row: a foreign key constraint fails (`final_project`.`users`, CONSTRAINT `Gender_ID_FK` FOREIGN KEY (`gender_ID`) REFERENCES `genders` (`gender_ID`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot delete or update a parent row: a foreign key constraint fails (`final_project`.`users`, CONSTRAINT `Gender_ID_FK` FOREIGN KEY (`gender_ID`) REFERENCES `genders` (`gender_ID`))
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-42:Not an admin

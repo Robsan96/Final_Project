@@ -42,20 +42,24 @@ public class UserDAOImplem implements UserDAO {
 
     public void updateUserByID(User user) {
         String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday," +
-                " country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
+                " country_ID = :country_ID, description = :description, facebook_account = :facebook_account, google_account = :google_account  WHERE user_ID = :user_ID";
 
         JdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
     public void updateUserByEmail(User user) {
         String sql = "UPDATE users SET full_name = :full_name, avatar = :avatar, gender_ID = :gender_ID, birthday = :birthday," +
-                " country_ID = :country_ID, facebook_account = :facebook_account, google_account = :google_account  WHERE email = :email";
+                " country_ID = :country_ID, description = :description, facebook_account = :facebook_account, google_account = :google_account  WHERE email = :email";
 
         JdbcTemplate.update(sql, getSqlParameterByModel(user));
     }
 
+//    public void deleteUserByID(int user_ID) {
+//        JdbcTemplate.update("UPDATE users SET full_name = 'DELETED', email = 'DELETED', username = 'DELETED' WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
+//    }
+
     public void deleteUserByID(int user_ID) {
-        JdbcTemplate.update("UPDATE users SET full_name = 'DELETED', email = 'DELETED', username = 'DELETED' WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
+        JdbcTemplate.update("DELETE FROM users WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
     }
 
 //    @Transactional
@@ -92,18 +96,21 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public User findUserByEmail(String email) {
-        String sql = "SELECT * FROM users WHERE email = :email";
+        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE email = :email";
         return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new UserMapper());
     }
 
     public User findUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = :username";
+        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE username = :username";
 
         return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(username)), new UserMapper());
     }
 
     public User findUserByID(int user_ID) {
-        String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = :user_ID";
 
         return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
     }
@@ -116,7 +123,8 @@ public class UserDAOImplem implements UserDAO {
 
     public UserCommentsDTO getUserCommentedPosts(int user_ID){
         try{
-            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                    " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = :user_ID";
             UserCommentsDTO userCommentedPosts = (UserCommentsDTO) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserCommentsDTO(user_ID)), new UserCommentsDTOMapper());
             userCommentedPosts.setCommentedPosts(postDAO.getAllPostsCommentedBy(userCommentedPosts.getUser_ID()));
             return userCommentedPosts;
@@ -129,7 +137,8 @@ public class UserDAOImplem implements UserDAO {
 
     public UserPostsDTO getUserPosts(int user_ID){
         try{
-            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                    " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = :user_ID";
             UserPostsDTO userPosts = (UserPostsDTO) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserPostsDTO(user_ID)), new UserPostDTOMapper());
             userPosts.setUploadedPosts(postDAO.getAllPostsByUser(userPosts.getUser_ID()));
             return userPosts;
@@ -142,7 +151,8 @@ public class UserDAOImplem implements UserDAO {
 
     public UserUpvotesDTO getUserUpvotedPosts(int user_ID){
         try{
-            String sql = "SELECT * FROM users WHERE user_ID = :user_ID";
+            String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                    " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = :user_ID";
             UserUpvotesDTO userUpvotes = (UserUpvotesDTO) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserUpvotesDTO(user_ID)), new UserUpvotesDTOMapper());
             userUpvotes.setLikedPosts(postDAO.getAllPostsVotedBy(userUpvotes.getUser_ID()));
             return userUpvotes;
@@ -154,7 +164,8 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public UserDTO getUserInfo(String email){
-        String sql = "SELECT * FROM users WHERE email = :email";
+        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE email = :email";
         UserDTO userDTO = (UserDTO) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new UserDTO(email)), new UserDTOMapper());
         return  userDTO;
     }
@@ -200,47 +211,47 @@ public class UserDAOImplem implements UserDAO {
         return parameterSource;
     }
 
-    private SqlParameterSource getSqlParameterByModel(Post post){
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        if(post != null){
-            parameterSource.addValue("postID", post.getPostID());
-            parameterSource.addValue("user_ID", post.getPostID());
-        }
-        return parameterSource;
-    }
-
-    private SqlParameterSource getSqlParameterByModel(CommentLikes commentLikes){
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        if(commentLikes != null){
-            parameterSource.addValue("profile_ID", commentLikes.getProfile_ID());
-        }
-        return parameterSource;
-    }
-
-    private SqlParameterSource getSqlParameterByModel(Comment comment){
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        if(comment != null){
-            parameterSource.addValue("profile_ID", comment.getId());
-            parameterSource.addValue("reply_of_ID", comment.getReply());
-        }
-        return parameterSource;
-    }
-
-    private SqlParameterSource getSqlParameterByModel(PostLikes postLikes){
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        if(postLikes != null){
-            parameterSource.addValue("profile_id", postLikes.getProfile_ID());
-        }
-        return parameterSource;
-    }
-
-    private SqlParameterSource getSqlParameterByModel(PostTag postTag){
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        if(postTag != null){
-            parameterSource.addValue("post_id", postTag.getPostID());
-        }
-        return parameterSource;
-    }
+//    private SqlParameterSource getSqlParameterByModel(Post post){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(post != null){
+//            parameterSource.addValue("postID", post.getPostID());
+//            parameterSource.addValue("user_ID", post.getPostID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(CommentLikes commentLikes){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(commentLikes != null){
+//            parameterSource.addValue("profile_ID", commentLikes.getProfile_ID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(Comment comment){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(comment != null){
+//            parameterSource.addValue("profile_ID", comment.getId());
+//            parameterSource.addValue("reply_of_ID", comment.getReply());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(PostLikes postLikes){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(postLikes != null){
+//            parameterSource.addValue("profile_id", postLikes.getProfile_ID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(PostTag postTag){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(postTag != null){
+//            parameterSource.addValue("post_id", postTag.getPostID());
+//        }
+//        return parameterSource;
+//    }
 
     private static final class UserMapper implements RowMapper {
 

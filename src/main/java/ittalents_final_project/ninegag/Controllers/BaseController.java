@@ -12,6 +12,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,6 +56,13 @@ public abstract class BaseController {
 //        log.error(e.getMessage());
 //        return new ErrorMsg("Error in the DataBase query, we are on fire!", HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now());
 //    }
+
+    @ExceptionHandler({SQLIntegrityConstraintViolationException.class})
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    public ErrorMsg handleDeleteOfForeignKey(Exception e) {
+        log.error(e.getMessage());
+        return new ErrorMsg("Cannot be deleted because it is foreign key. ", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+    }
 
     @ExceptionHandler({WrongEmailOrPasswordException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
