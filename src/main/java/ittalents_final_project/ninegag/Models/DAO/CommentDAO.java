@@ -65,7 +65,7 @@ public class CommentDAO {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor=Exception.class)
     public int deleteComment(Comment comment) {
         List<Comment> coments = this.getAllByComment(comment);
         for (Comment coment1 : coments) {

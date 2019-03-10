@@ -5,7 +5,7 @@ import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
 import ittalents_final_project.ninegag.Models.DAO.TagDAO;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
-import ittalents_final_project.ninegag.Models.POJO.Tag;
+import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
@@ -69,16 +69,20 @@ public class FileController extends BaseController {
 
     @PostMapping(value = "posts/add")
     @Transactional
-    public String upploadImageToPost(@RequestBody RequestPostDTO postDTO, HttpSession session)
+    public ResponsePostDTO upploadImageToPost(@RequestBody RequestPostDTO postDTO, HttpSession session)
             throws NotLoggedException, IOException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         postDTO.setProfileID(user.getUser_ID());
-        if (postDTO.getContentURL().isEmpty() || postDTO.getContentURL() == null) {
-            throw new BadParamException("URL is not valid or empty!");
+        if (postDTO.getContentURL()==null || postDTO.getContentURL().isEmpty() ) {
+            throw new BadParamException("URL is null or empty!");
         }
-        if (postDTO.getTitle().isEmpty() || postDTO.getTitle() == null) {
-            throw new BadParamException("Title of the post cannot be empty ");
+        if (postDTO.getTitle() == null) {
+            throw new BadParamException("Title cannot be null !");
+        }
+        String title=postDTO.getTitle().replace(" ","");
+        if(title.isEmpty()|| title.length()<5){
+            throw new BadParamException("Invalid title, must contain at least 5 symbols which are not spaces");
         }
         if (daoS.getById(postDTO.getSectionID()) == null) {
             throw new BadParamException("Section with that ID does not exist !");
@@ -88,7 +92,7 @@ public class FileController extends BaseController {
         if (postDTO.getTags().size() > 0 || postDTO.getTags() != null) {
             daoT.setTags(postId, postDTO.getTags());
         }
-        return "Post was created with ID -> " + postId;
+        return daoP.getBPostDTO(postId,true);
     }
 
     private String CreateImage(RequestPostDTO requestPostDTO) throws IOException {

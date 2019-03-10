@@ -1,8 +1,11 @@
 package ittalents_final_project.ninegag.Controllers;
 
 import ittalents_final_project.ninegag.Models.DAO.PostDAO;
+import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
+import ittalents_final_project.ninegag.Models.DAO.TagDAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Post;
+import ittalents_final_project.ninegag.Models.POJO.Section;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -18,6 +21,10 @@ public class PostController extends BaseController {
 
     @Autowired
     PostDAO dao;
+    @Autowired
+    SectionDAO daoS;
+    @Autowired
+    TagDAO daoT;
 
     @GetMapping(value = "/id/{postId}")
     public ResponsePostDTO getPostById(@PathVariable(value = "postId") int id) throws BadParamException {
@@ -29,22 +36,23 @@ public class PostController extends BaseController {
     }
 
     @GetMapping(value = "/{sectionId}")
-    public List<ResponsePostDTO> getAllPostsBySection(@PathVariable(value = "sectionId") int sectionId)
-            throws BadParamException {
-        List<ResponsePostDTO> posts = dao.getAllPostsBySection(sectionId);
-        if (posts == null) {
-            throw new BadParamException("Posts with that sectionId does not exist!");
+    public List<ResponsePostDTO> getAllPostsBySection(@PathVariable(value = "sectionId") int sectionId,
+                                                      @RequestParam(value = "orderd") String orderd) throws BadParamException {
+        if (daoS.getById(sectionId) == null) {
+            throw new BadParamException("Invalid section id !");
         }
+        List<ResponsePostDTO> posts = dao.getAllPostsBySection(sectionId, orderd);
         return posts;
     }
 
     @GetMapping(value = "/tag/{tagId}")
-    public List<ResponsePostDTO> getAllPostsByTag(@PathVariable(value = "tagId") int tagId)
+    public List<ResponsePostDTO> getAllPostsByTag(@PathVariable(value = "tagId") int tagId,
+                                                  @RequestParam(value = "ordered") String ordered)
             throws BadParamException {
-        List<ResponsePostDTO> posts = dao.getAllPostsByTag(tagId);
-        if (posts == null) {
-            throw new BadParamException("Posts with that tagId does not exist!");
+        if (daoT.getById(tagId) == null) {
+            throw new BadParamException("Invalid tag id !");
         }
+        List<ResponsePostDTO> posts = dao.getAllPostsByTag(tagId, ordered);
         return posts;
     }
 
@@ -73,7 +81,11 @@ public class PostController extends BaseController {
             throw new BadParamException("Post with that Id does not exist!");
         }
         if (user.getUser_ID() == post.getProfileID() || validateAdmin(session)) {
-            return "Deleted post with id " + dao.removePost(post);
+            try {
+                return "Deleted post with Id: " + dao.removePost(post);
+            } catch (Exception e) {
+                return "Sorry , you cant delete thist post for some reason, pls try again later or contact support";
+            }
         } else {
             return "You dont have acces to that option";
         }

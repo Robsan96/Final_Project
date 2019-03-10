@@ -35,6 +35,16 @@ public class TagDAO {
         }
     }
 
+    public Tag getById(int tagId) {
+        try {
+            String sql = SQL + " WHERE tag_id=?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{tagId}, (resultSet, i) -> mapRow(resultSet));
+        } catch (EmptyResultDataAccessException e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
     public List<Tag> getTagsByPost(int postId) {
         String sql = "SELECT DISTINCT tag_ID,tag_name FROM tags t JOIN post_tags p USING(tag_ID) WHERE p.post_ID=?";
         return jdbcTemplate.query(sql, new Object[]{postId}, (resultSet, i) -> mapRow(resultSet));

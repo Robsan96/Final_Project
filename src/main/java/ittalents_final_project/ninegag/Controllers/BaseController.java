@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.apache.log4j.Logger;
+
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +28,8 @@ public abstract class BaseController {
         return new ErrorMsg(e.getMessage(), HttpStatus.NOT_FOUND.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class})
+    @ExceptionHandler({EmptyParameterException.class, BadParamException.class, AlreadyExistsException.class,
+            IllegalArgumentException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleEmptyParamExeption(Exception e) {
         log.error(e.getMessage());
@@ -48,7 +49,7 @@ public abstract class BaseController {
         log.error(e.getMessage());
         return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
-    
+
 //    @ExceptionHandler({SQLException.class})
 //    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 //    public ErrorMsg handleMySQL(Exception e) {

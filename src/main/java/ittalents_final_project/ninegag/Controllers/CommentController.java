@@ -28,8 +28,9 @@ public class CommentController extends BaseController {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         comment.setProfile(user.getUser_ID());
-        if (comment.getContent() == null || comment.getContent().length() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+        comment.setContent(comment.getContent().trim());
+        if (comment.getContent() == null || comment.getContent().isEmpty()) {
+            throw new EmptyParameterException("Comment field 'content' cant be null or empty !");
         }
         Post post = daoP.getPostById(comment.getPost());
         if (post == null) {
@@ -44,8 +45,9 @@ public class CommentController extends BaseController {
         User user = (User) session.getAttribute(LOGGED);
         comment.setProfile(user.getUser_ID());
         Comment mainComment = daoC.getById(comment.getReply());
-        if (comment.getContent() == null || comment.getContent().length() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+        comment.setContent(comment.getContent().trim());
+        if (comment.getContent() == null || comment.getContent().isEmpty()) {
+            throw new EmptyParameterException("Comment field 'content' cannot be null or empty!");
         }
         if (mainComment == null) {
             throw new BadParamException("cant reply on non-existing comment!");
@@ -141,6 +143,11 @@ public class CommentController extends BaseController {
         if (user.getUser_ID() != comment.getProfile() && !validateAdmin(session)) {
             throw new PermitionDeniedException("You don't have access to that option");
         }
-        return "Comment deleted with id " + daoC.deleteComment(comment);
+        try {
+            return "Comment deleted with id " + daoC.deleteComment(comment);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return "Comment can not be deleted right now , pls try again later or contact support";
+        }
     }
 }

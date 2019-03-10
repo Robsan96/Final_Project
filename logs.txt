@@ -1,104 +1,51 @@
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:PreparedStatementCallback; Cannot add or update a child row: a foreign key constraint fails (`final_project`.`posts`, CONSTRAINT `Section_ID_FK` FOREIGN KEY (`section_ID`) REFERENCES `sections` (`section_ID`)); nested exception is java.sql.SQLIntegrityConstraintViolationException: Cannot add or update a child row: a foreign key constraint fails (`final_project`.`posts`, CONSTRAINT `Section_ID_FK` FOREIGN KEY (`section_ID`) REFERENCES `sections` (`section_ID`))
-2019-03-08-59--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Section with that ID does not exist !
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-59--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Section with that ID does not exist !
-2019-03-08-65--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist!
-2019-03-08-65--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Posts with that sectionId does not exist!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Posts with that sectionId does not exist!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Posts with that tagId does not exist!
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:cant reply on non-existing comment!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:cant reply on non-existing comment!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:cant reply on non-existing comment!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no comment with that id !
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment with that id does not exist
-2019-03-08-65--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist!
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Name is empty or null
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Name is empty or null
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Name is empty or null
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Name cant be empty
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:This section already exist !
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Name cant be empty
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-47--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-58--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Section with that ID does not exist !
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:cant reply on non-existing comment!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:cant reply on non-existing comment!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There is no comment with that id !
-2019-03-08-40--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There is no comment with that id to like !
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no comment with that id !
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no replies for that comment (11)
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no comment with that id !
-2019-03-08-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
-2019-03-08-33--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no comment with that id !
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no replies for that comment (11)
-2019-03-08-26--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:There are no replies for that comment (9)
-2019-03-08-41--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
+2019-03-09-42--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
+2019-03-09-27--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
+2019-03-09-27--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
+2019-03-09-27--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:URL is not valid or empty!
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:URL is not valid or empty!
+2019-03-09-42--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:URL is null or empty!
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Input byte[] should at least have 2 bytes for base64 bytes
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Illegal base64 character 20
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Input byte[] should at least have 2 bytes for base64 bytes
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Illegal base64 character 20
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Title of the post cannot be empty 
+2019-03-09-58--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Section with that ID does not exist !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Title of the post cannot be empty or null
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Title of the post cannot be empty or null
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Title of the post must be not null, not empty or at least 5 symbols long
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid title of the post . Must be not null, not empty or at least 5 symbols long
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Title cannot be null !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid title, must contain at least 5 symbols which are not spaces
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid title, must contain at least 5 symbols which are not spaces
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid title, must contain at least 5 symbols which are not spaces
+2019-03-09-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-63--ERROR-ittalents_final_project.ninegag.Models.DAO.CommentDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-27--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment with that id does not exist
+2019-03-09-48--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist and cant be commented
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' is empty(null) or wrong written!
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cant be null or empty !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cant be null or empty !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cant be null or empty !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cant be null or empty !
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cannot be null or empty!
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cannot be null or empty!
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Comment field 'content' cannot be null or empty!
+2019-03-09-42--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:You are not logged in.
+2019-03-09-58--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Section with that ID does not exist !
+2019-03-09-65--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Post with that id does not exist!
+2019-03-09-53--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid section id !
+2019-03-09-53--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid section id !
+2019-03-09-43--ERROR-ittalents_final_project.ninegag.Models.DAO.TagDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid section id !
+2019-03-09-43--ERROR-ittalents_final_project.ninegag.Models.DAO.TagDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid section id !
+2019-03-09-43--ERROR-ittalents_final_project.ninegag.Models.DAO.TagDAO:Incorrect result size: expected 1, actual 0
+2019-03-09-35--ERROR-ittalents_final_project.ninegag.Controllers.BaseController:Invalid tag id !
