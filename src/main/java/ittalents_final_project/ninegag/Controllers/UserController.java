@@ -19,7 +19,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +58,13 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/register")
     public UserDTO saveUser(@RequestBody User user, HttpSession session)
-            throws InvalidPasswordException, AlreadyExistsException{
+            throws InvalidPasswordException, AlreadyExistsException, NotAnEmailOrInvalidUsernameException {
+        if(user.getEmail().contains(" ")){
+            throw new NotAnEmailOrInvalidUsernameException("This is not a valid email.");
+        }
+        if(user.getUsername().contains(" ")||user.getUsername().length()<3){
+            throw new NotAnEmailOrInvalidUsernameException("This is not a valid username.");
+        }
         try {
             if (dao.findUserByEmail(user.getEmail()) != null||dao.findUserByUsername(user.getUsername()) != null) {
                 throw new AlreadyExistsException("You have already registered with this email.");

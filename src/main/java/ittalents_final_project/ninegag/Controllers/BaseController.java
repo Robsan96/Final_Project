@@ -37,7 +37,7 @@ public abstract class BaseController {
     }
 
 
-    @ExceptionHandler({NotAnEmailException.class})
+    @ExceptionHandler({NotAnEmailOrInvalidUsernameException.class})
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleFakeEmail(Exception e) {
         log.error(e.getMessage());
