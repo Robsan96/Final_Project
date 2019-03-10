@@ -1,2 +1,5 @@
-2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-42:You are not logged in.
-2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-42:You are not logged in.
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-35:Failed to convert value of type 'java.lang.String' to required type 'int'; nested exception is java.lang.NumberFormatException: For input string: "hot"
+2019-03-10--ERROR-ittalents_final_project.ninegag.Models.DAO.SectionDAO-52:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-35:Invalid section id !
+2019-03-10--ERROR-ittalents_final_project.ninegag.Models.DAO.PostDAO-71:Incorrect result size: expected 1, actual 0
+2019-03-10--ERROR-ittalents_final_project.ninegag.Controllers.BaseController-35:Post with that id does not exist!

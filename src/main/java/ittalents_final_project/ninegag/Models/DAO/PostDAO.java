@@ -50,6 +50,12 @@ public class PostDAO {
         }
     }
 
+    public List<ResponsePostDTO> getAllPostsBy(String orderd) {
+        String sql = SQL;
+        sql += OrderByMethod(orderd);
+        return jdbcTemplate.query(sql, (resultSet, i) -> mapRowBasicDTO(resultSet));
+    }
+
     public ResponsePostDTO getBPostDTO(int Id, boolean showComments) {
         try {
             String sql = SQL + " WHERE post_ID=?";
@@ -78,16 +84,7 @@ public class PostDAO {
 
     public List<ResponsePostDTO> getAllPostsByTag(int tag, String orderd) {
         String sql = SQL + " JOIN post_tags t ON(p.post_ID=t.post_id) WHERE t.tag_id=? ";
-        switch (orderd) {
-            case "hot":
-                sql += "ORDER BY votes DESC";
-                break;
-            case "fresh":
-                sql += "ORDER BY date_time_created DESC";
-                break;
-            default:
-                sql += "ORDER BY votes DESC";
-        }
+        sql += OrderByMethod(orderd);
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{tag}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
             post.setTags(tagDAO.getTagsByPost(post.getPostID()));
@@ -97,16 +94,7 @@ public class PostDAO {
 
     public List<ResponsePostDTO> getAllPostsBySection(int sectionId, String orderd) {
         String sql = SQL + "WHERE p.section_ID=? ";
-        switch (orderd) {
-            case "hot":
-                sql += "ORDER BY votes DESC";
-                break;
-            case "fresh":
-                sql += "ORDER BY date_time_created DESC";
-                break;
-            default:
-                sql += "ORDER BY votes DESC";
-        }
+        sql += OrderByMethod(orderd);
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{sectionId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
@@ -192,6 +180,21 @@ public class PostDAO {
             return jdbcTemplate.update("INSERT INTO post_likes(post_id,profile_id,status) " +
                     "VALUES(?,?,?)", new Object[]{postId, userId, vote});
         }
+    }
+
+    private String OrderByMethod(String orderd) {
+        String sql = "";
+        switch (orderd) {      // Default case is like 'hot' but it looked so empty with only one case
+            case "hot":        // and it was added like this to show that if we want we can extand easy serach options
+                sql = "ORDER BY votes DESC";
+                break;
+            case "fresh":
+                sql = "ORDER BY date_time_created DESC";
+                break;
+            default:
+                sql = "ORDER BY votes DESC";
+        }
+        return sql;
     }
 
     private ResponsePostDTO mapRowBasicDTO(ResultSet rs) throws SQLException {

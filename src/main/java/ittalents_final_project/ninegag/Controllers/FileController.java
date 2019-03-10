@@ -38,7 +38,7 @@ public class FileController extends BaseController {
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
+    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
@@ -51,7 +51,7 @@ public class FileController extends BaseController {
             throw new NullPointerException("URL is not valid or empty!");
         }
         try {
-            user.setAvatar(createImage(url,user.getUsername()));
+            user.setAvatar(createImage(url, user.getUsername()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,28 +66,28 @@ public class FileController extends BaseController {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         postDTO.setProfileID(user.getUser_ID());
-        if (postDTO.getContentURL()==null || postDTO.getContentURL().isEmpty() ) {
+        if (postDTO.getContentURL() == null || postDTO.getContentURL().isEmpty()) {
             throw new BadParamException("URL is null or empty!");
         }
         if (postDTO.getTitle() == null) {
             throw new BadParamException("Title cannot be null !");
         }
-        String title=postDTO.getTitle().replace(" ","");
-        if(title.isEmpty()|| title.length()<5){
+        String title = postDTO.getTitle().replace(" ", "");
+        if (title.isEmpty() || title.length() < 5) {
             throw new BadParamException("Invalid title, must contain at least 5 symbols which are not spaces");
         }
         if (daoS.getById(postDTO.getSectionID()) == null) {
             throw new BadParamException("Section with that ID does not exist !");
         }
-        postDTO.setContentURL(createImage(postDTO.getContentURL(),postDTO.getTitle()));
+        postDTO.setContentURL(createImage(postDTO.getContentURL(), postDTO.getTitle()));
         int postId = daoP.addPost(postDTO);
         if (postDTO.getTags().size() > 0 || postDTO.getTags() != null) {
             daoT.setTags(postId, postDTO.getTags());
         }
-        return daoP.getBPostDTO(postId,true);
+        return daoP.getBPostDTO(postId, true);
     }
 
-    private String createImage(String url,String name) throws IOException {
+    private String createImage(String url, String name) throws IOException {
         String base64 = url;
         byte[] bytes = Base64.getDecoder().decode(base64);
         String fileName = name + FILE_NAME;
@@ -96,7 +96,8 @@ public class FileController extends BaseController {
             fos.write(bytes);
             return newFile.getName();
         } catch (IOException e) {
-            throw new IOException("Error in uploading post image or profile avatar!");
+            throw new IOException("Error in uploading post image or profile avatar ," +
+                    " pls try again later or contact support !");
         }
     }
 

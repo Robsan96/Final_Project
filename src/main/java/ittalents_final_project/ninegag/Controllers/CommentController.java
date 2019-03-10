@@ -54,11 +54,7 @@ public class CommentController extends BaseController {
         } else {
             comment.setPost(mainComment.getPost());
         }
-        if (daoC.addReply(comment) > 0) {
-            return "Reply was added successfully";
-        } else {
-            return "Something went wrong with adding reply , pls try again";
-        }
+        return "Reply was added successfully with id -> " + daoC.addReply(comment);
     }
 
     @PostMapping(value = "/votes")

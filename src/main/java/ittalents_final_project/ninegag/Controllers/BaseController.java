@@ -47,7 +47,7 @@ public abstract class BaseController {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMsg handleIOException(Exception e) {
         log.error(e.getMessage());
-        return new ErrorMsg(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ErrorMsg(e.getMessage(), HttpStatus.I_AM_A_TEAPOT.value(), LocalDateTime.now());
     }
 
 //    @ExceptionHandler({SQLException.class})

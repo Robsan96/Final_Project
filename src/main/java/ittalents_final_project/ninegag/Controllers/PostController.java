@@ -35,7 +35,7 @@ public class PostController extends BaseController {
         return post;
     }
 
-    @GetMapping(value = "/{sectionId}")
+    @GetMapping(value = "/sections/{sectionId}")
     public List<ResponsePostDTO> getAllPostsBySection(@PathVariable(value = "sectionId") int sectionId,
                                                       @RequestParam(value = "ordered") String ordered)
             throws BadParamException {
@@ -46,7 +46,7 @@ public class PostController extends BaseController {
         return posts;
     }
 
-    @GetMapping(value = "/tag/{tagId}")
+    @GetMapping(value = "/tags/{tagId}")
     public List<ResponsePostDTO> getAllPostsByTag(@PathVariable(value = "tagId") int tagId,
                                                   @RequestParam(value = "ordered") String ordered)
             throws BadParamException {
@@ -55,6 +55,11 @@ public class PostController extends BaseController {
         }
         List<ResponsePostDTO> posts = dao.getAllPostsByTag(tagId, ordered);
         return posts;
+    }
+
+    @GetMapping(value = "/")
+    public List<ResponsePostDTO> getAllPostsBy(@RequestParam(value = "ordered") String ordered) {
+        return dao.getAllPostsBy(ordered);
     }
 
     @PutMapping(value = "/votes")
