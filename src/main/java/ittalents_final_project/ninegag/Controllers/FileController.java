@@ -5,7 +5,7 @@ import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
 import ittalents_final_project.ninegag.Models.DAO.TagDAO;
 import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
-import ittalents_final_project.ninegag.Models.POJO.Tag;
+import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.EmptyParameterException;
@@ -38,7 +38,7 @@ public class FileController extends BaseController {
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\Konstantin\\TestFolder\\";
+    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
@@ -46,62 +46,58 @@ public class FileController extends BaseController {
     public void upploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
             throws NotLoggedException {
         validateLogged(session);
+        User user = (User) session.getAttribute(LOGGED);
         if (url.isEmpty() || url == null) {
             throw new NullPointerException("URL is not valid or empty!");
         }
-        byte[] base64 = url.getBytes();
-        User user = (User) session.getAttribute(LOGGED);
-        String encoded = Base64.getEncoder().encodeToString(base64);
-        base64 = Base64.getDecoder().decode(encoded);
-        String fileName = user.getEmail() + FILE_NAME;
-        File newFile = new File(FILE_PATH + fileName);
-        try (FileOutputStream fos = new FileOutputStream(newFile)) {
-            fos.write(base64);
-            user.setAvatar(newFile.getName());
-
-            daoU.updateUserByID(user);
-
+        try {
+            user.setAvatar(createImage(url, user.getUsername()));
         } catch (IOException e) {
-            log.error(e.getMessage());
-            System.out.println("Error in uploading avatar!");
+            e.printStackTrace();
         }
+        daoU.updateUserByID(user);
+
     }
 
     @PostMapping(value = "posts/add")
     @Transactional
-    public String upploadImageToPost(@RequestBody RequestPostDTO postDTO, HttpSession session)
+    public ResponsePostDTO upploadImageToPost(@RequestBody RequestPostDTO postDTO, HttpSession session)
             throws NotLoggedException, IOException, BadParamException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         postDTO.setProfileID(user.getUser_ID());
-        if (postDTO.getContentURL().isEmpty() || postDTO.getContentURL() == null) {
-            throw new BadParamException("URL is not valid or empty!");
+        if (postDTO.getContentURL() == null || postDTO.getContentURL().isEmpty()) {
+            throw new BadParamException("URL is null or empty!");
         }
-        if (postDTO.getTitle().isEmpty() || postDTO.getTitle() == null) {
-            throw new BadParamException("Title of the post cannot be empty ");
+        if (postDTO.getTitle() == null) {
+            throw new BadParamException("Title cannot be null !");
+        }
+        String title = postDTO.getTitle().replace(" ", "");
+        if (title.isEmpty() || title.length() < 5) {
+            throw new BadParamException("Invalid title, must contain at least 5 symbols which are not spaces");
         }
         if (daoS.getById(postDTO.getSectionID()) == null) {
             throw new BadParamException("Section with that ID does not exist !");
         }
-        postDTO.setContentURL(CreateImage(postDTO));
+        postDTO.setContentURL(createImage(postDTO.getContentURL(), postDTO.getTitle()));
         int postId = daoP.addPost(postDTO);
         if (postDTO.getTags().size() > 0 || postDTO.getTags() != null) {
             daoT.setTags(postId, postDTO.getTags());
         }
-        return "Post was created with ID -> " + postId;
+        return daoP.getBPostDTO(postId, true);
     }
 
-    private String CreateImage(RequestPostDTO requestPostDTO) throws IOException {
-        String base64 = requestPostDTO.getContentURL();
+    private String createImage(String url, String name) throws IOException {
+        String base64 = url;
         byte[] bytes = Base64.getDecoder().decode(base64);
-        String fileName = requestPostDTO.getProfileID() + FILE_NAME;
+        String fileName = name + FILE_NAME;
         File newFile = new File(FILE_PATH + fileName);
         try (FileOutputStream fos = new FileOutputStream(newFile)) {
             fos.write(bytes);
-            requestPostDTO.setContentURL(newFile.getName());
-            return requestPostDTO.getContentURL();
+            return newFile.getName();
         } catch (IOException e) {
-            throw new IOException("Error in uploading post image or profile avatar!");
+            throw new IOException("Error in uploading post image or profile avatar ," +
+                    " pls try again later or contact support !");
         }
     }
 

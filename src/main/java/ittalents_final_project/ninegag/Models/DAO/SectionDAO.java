@@ -1,7 +1,6 @@
 package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
-import ittalents_final_project.ninegag.Models.POJO.Post;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +29,7 @@ public class SectionDAO {
     public static final String SQL = "SELECT section_id , section_name FROM sections";
 
     public List<Section> getAll() {
-        try {
-            return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
-        } catch (EmptyResultDataAccessException e) {
-            log.error(e.getMessage());
-            return null;
-        }
+        return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
     }
 
     public Section getByName(String section_name) {
@@ -75,9 +69,9 @@ public class SectionDAO {
         return keyHolder.getKey().intValue();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteSection(Section section) {
-        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId());
+        List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId(), "fresh");
         for (ResponsePostDTO post : posts) {
             daoP.removePost(post);
         }

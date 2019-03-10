@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpSession;
 
 @RestController
@@ -56,7 +55,8 @@ public class UserController extends BaseController {
     }
 
     @PostMapping(value = "/register")
-    public UserDTO saveUser(@RequestBody User user, HttpSession session) throws MessagingException, InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException {
+    public UserDTO saveUser(@RequestBody User user, HttpSession session)
+            throws  InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException {
         try {
             if (dao.findUserByEmail(user.getEmail()) != null || dao.findUserByUsername(user.getUsername()) != null) {
                 throw new AlreadyExistsException("You have already registered with this email or username.");

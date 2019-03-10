@@ -28,8 +28,9 @@ public class CommentController extends BaseController {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         comment.setProfile(user.getUser_ID());
-        if (comment.getContent() == null || comment.getContent().length() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+        comment.setContent(comment.getContent().trim());
+        if (comment.getContent() == null || comment.getContent().isEmpty()) {
+            throw new EmptyParameterException("Comment field 'content' cant be null or empty !");
         }
         Post post = daoP.getPostById(comment.getPost());
         if (post == null) {
@@ -44,19 +45,16 @@ public class CommentController extends BaseController {
         User user = (User) session.getAttribute(LOGGED);
         comment.setProfile(user.getUser_ID());
         Comment mainComment = daoC.getById(comment.getReply());
-        if (comment.getContent() == null || comment.getContent().length() == 0) {
-            throw new EmptyParameterException("Comment field 'content' is empty(null) or wrong written!");
+        comment.setContent(comment.getContent().trim());
+        if (comment.getContent() == null || comment.getContent().isEmpty()) {
+            throw new EmptyParameterException("Comment field 'content' cannot be null or empty!");
         }
         if (mainComment == null) {
             throw new BadParamException("cant reply on non-existing comment!");
         } else {
             comment.setPost(mainComment.getPost());
         }
-        if (daoC.addReply(comment) > 0) {
-            return "Reply was added successfully";
-        } else {
-            return "Something went wrong with adding reply , pls try again";
-        }
+        return "Reply was added successfully with id -> " + daoC.addReply(comment);
     }
 
     @PostMapping(value = "/votes")
@@ -76,27 +74,25 @@ public class CommentController extends BaseController {
         }
     }
 
-    //TODO debate if needed !
-    @GetMapping(value = "/votes/{commentId}")
-    public int getAllVotesByComment(@PathVariable("commentId") int commentId) {
-        if (daoC.getById(commentId) == null) {
-            throw new NullPointerException("Comment with that id does not exist");
-        } else {
-            return daoC.getAllVotes(commentId);
-        }
-    }
-
-    @GetMapping(value = "/fresh/{postId}")
-    public List<ResponseCommentDTO> getAllCommentsSortByDate(@PathVariable("postId") int postId) {
+    @GetMapping(value = "/{postId}/fresh")
+    public List<ResponseCommentDTO> getAllCommentsByPostFresh(@PathVariable("postId") int postId) {
         List<ResponseCommentDTO> comments = daoC.getAllFreshByPostDTO(postId);
-        if (comments == null) {
-            throw new NullPointerException("There are no comments for this post!");
-        }
         return comments;
     }
 
+    @GetMapping(value = "/{commentId}")
+    public ResponseCommentDTO getCommentByid(@PathVariable("commentId") int commentId) {
+        ResponseCommentDTO comment = daoC.getById(commentId);
+        if (comment == null) {
+            throw new NullPointerException("There are no comment with that Id !");
+        } else {
+            return comment;
+        }
+    }
+
     @GetMapping(value = "/replies/{commentId}")
-    public List<ResponseCommentDTO> getAllRepliesOfComment(@PathVariable("commentId") int commentId) throws BadParamException {
+    public List<ResponseCommentDTO> getAllRepliesOfComment(@PathVariable("commentId") int commentId)
+            throws BadParamException {
         Comment comment = daoC.getById(commentId);
         if (comment == null) {
             throw new BadParamException("There are no comment with that id !");
@@ -111,21 +107,25 @@ public class CommentController extends BaseController {
 
     @PutMapping(value = "/update")
     public String uppdateCommentContent(@RequestBody Comment comment, HttpSession session)
-            throws NotLoggedException, PermitionDeniedException {
+            throws NotLoggedException, PermitionDeniedException, EmptyParameterException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
+        comment.setProfile(user.getUser_ID());
+        comment.setContent(comment.getContent().trim());
         if (daoC.getById(comment.getId()) == null) {
             throw new NullPointerException("Comment with that id does not exist");
-        } else {
-            if (comment.getProfile() == user.getUser_ID() || validateAdmin(session)) {
-                if (daoC.uppdateComment(comment) > 0) {
-                    return "Comment with ID " + comment.getId() + " updated!";
-                } else {
-                    return "Comment wasnt update for some reason pls contact support!";
-                }
+        }
+        if (comment.getContent() == null || comment.getContent().isEmpty()) {
+            throw new EmptyParameterException("Comment field 'content' cant be null or empty !");
+        }
+        if (comment.getProfile() == user.getUser_ID() || validateAdmin(session)) {
+            if (daoC.uppdateComment(comment) > 0) {
+                return "Comment with ID " + comment.getId() + " updated!";
             } else {
-                throw new PermitionDeniedException("You dont have acces to that option!");
+                return "Comment wasn't updated for some reason pls try again later or contact support!";
             }
+        } else {
+            throw new PermitionDeniedException("You don't have access to that option!");
         }
     }
 
@@ -141,6 +141,11 @@ public class CommentController extends BaseController {
         if (user.getUser_ID() != comment.getProfile() && !validateAdmin(session)) {
             throw new PermitionDeniedException("You don't have access to that option");
         }
-        return "Comment deleted with id " + daoC.deleteComment(comment);
+        try {
+            return "Comment deleted with id " + daoC.deleteComment(comment);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return "Comment can not be deleted right now , pls try again later or contact support";
+        }
     }
 }

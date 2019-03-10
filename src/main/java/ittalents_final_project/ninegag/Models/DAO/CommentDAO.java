@@ -29,7 +29,7 @@ public class CommentDAO {
     private static final String SELECT_COMMENT = "SELECT c.comment_ID , c.content,c.post_ID,c.profile_ID," +
             "c.reply_of_ID,c.date_time_created,(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID " +
             "AND status=1 -(SELECT COUNT(*) FROM comments_likes WHERE comment_id=c.comment_ID AND status=0)) AS votes" +
-            ",(SELECT COUNT(*) FROM comments c WHERE reply_of_ID=c.comment_ID)AS replies" +
+            ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
             ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
     public int addComment(Comment comment) {
@@ -46,16 +46,26 @@ public class CommentDAO {
     }
 
     public int addReply(Comment comment) {
-        String sql = "INSERT INTO comments(post_ID,profile_ID,content,reply_of_ID) VALUES(?,?,?,?)";
-        return jdbcTemplate.update(sql, new Object[]{comment.getPost(), comment.getProfile(),
-                comment.getContent(), comment.getReply()});
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO comments(post_ID,profile_ID, content,reply_of_ID) VALUES(?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, comment.getPost());
+            ps.setInt(2, comment.getProfile());
+            ps.setString(3, comment.getContent());
+            ps.setInt(4, comment.getReply());
+            return ps;
+        }, keyHolder);
+        return keyHolder.getKey().intValue();
     }
 
-    public Comment getById(int id) {
+    public ResponseCommentDTO getById(int id) {
         try {
             String sql = SELECT_COMMENT + "WHERE comment_ID=?";
 
-            Comment comment = jdbcTemplate.queryForObject(sql, new Object[]{id}, ((resultSet, i) -> mapRow(resultSet)));
+            ResponseCommentDTO comment = jdbcTemplate.queryForObject(sql, new Object[]{id},
+                    ((resultSet, i) -> mapRowR(resultSet)));
 
             return comment;
 
@@ -65,7 +75,7 @@ public class CommentDAO {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int deleteComment(Comment comment) {
         List<Comment> coments = this.getAllByComment(comment);
         for (Comment coment1 : coments) {
@@ -77,7 +87,6 @@ public class CommentDAO {
         return comment.getId();
     }
 
-
     public List<ResponseCommentDTO> getAllByPostDTO(int postId) {
         String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY votes DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
@@ -87,11 +96,11 @@ public class CommentDAO {
 
     public List<Comment> getAllByPost(Post post) {
 
-        String sql = "SELECT * FROM comments WHERE post_ID=? ";
+        String sql = "SELECT comment_ID FROM comments WHERE post_ID=? ";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{post.getPostID()},
                 (resultSet, i) -> mapRow(resultSet));
         return comments;
-    }
+    } // Using this method for deleting !
 
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
         String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
@@ -134,13 +143,6 @@ public class CommentDAO {
                 "SET content=?" +
                 "WHERE comment_ID=?";
         return jdbcTemplate.update(sql, new Object[]{comment.getContent(), comment.getId()});
-    }
-
-    public int getAllVotes(int comentId) {
-        String sql = "SELECT COUNT(*)-(SELECT COUNT(*)FROM comments_likes WHERE comment_ID=? AND status=0)AS points " +
-                "FROM comments_likes WHERE comment_ID=? AND status=1";
-        int i = jdbcTemplate.queryForObject(sql, new Object[]{comentId, comentId}, Integer.class);
-        return i;
     }
 
     private Comment mapRow(ResultSet rs) throws SQLException {
