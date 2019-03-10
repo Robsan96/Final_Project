@@ -23,11 +23,4 @@ public class Country {
         this.country_ID = country_ID;
     }
 
-    @Override
-    public String toString() {
-        return "Country{" +
-                "country_ID=" + country_ID +
-                ", country_name='" + country_name + '\'' +
-                '}';
-    }
 }

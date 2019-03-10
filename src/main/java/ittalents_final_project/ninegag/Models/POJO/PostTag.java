@@ -11,5 +11,5 @@ import lombok.Setter;
 @Setter
 public class PostTag {
 
-    int postID;
+    private int postID;
 }

@@ -23,11 +23,4 @@ public class Gender {
         this.gender_Type = gender_Type;
     }
 
-    @Override
-    public String toString() {
-        return "Gender{" +
-                "gender_ID=" + gender_ID +
-                ", gender_Type='" + gender_Type + '\'' +
-                '}';
-    }
 }

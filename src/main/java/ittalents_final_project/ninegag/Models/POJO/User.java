@@ -18,6 +18,7 @@ public class User {
     private String email;
     private String username;
     private String password;
+    private String newPassword;
     private String salt;
     private String full_name;
     private java.sql.Date date_created;
@@ -38,6 +39,11 @@ public class User {
 
     public User(String email) {
         this.email = email;
+    }
+
+    public User(int user_ID, String password) {
+        this.user_ID = user_ID;
+        this.password = password;
     }
 
     public User(int user_ID, String email, String username, String full_name, Date date_created, Date birthday, int gender_ID,
