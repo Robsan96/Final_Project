@@ -62,32 +62,7 @@ public class UserDAOImplem implements UserDAO {
         JdbcTemplate.update("DELETE FROM users WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
     }
 
-//    @Transactional
-//    public void deleteUserByID(int user_ID) {
-//        deleteCommentsByUser(user_ID);
-//        deletePostsByUser(user_ID);
-//
-//        JdbcTemplate.update("DELETE FROM users WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
-//    }
-//
-//    private void deleteCommentsByUser(int user_ID){
-//        JdbcTemplate.update("DELETE FROM comments_likes WHERE profile_ID= :profile_ID", getSqlParameterByModel(new CommentLikes(user_ID)));
-//        JdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID= :reply_of_ID AND profile_ID= :profile_ID", getSqlParameterByModel(new Comment(user_ID,user_ID)));
-//    }
-//
-//    private void deletePostsByUser(int user_ID){
-//        List<ResponsePostDTO> posts = postDAO.getAllPostsByUser(user_ID);
-//        List<Integer> postID = new ArrayList();
-//        for (ResponsePostDTO r: posts){
-//            postID.add(r.getPostID());
-//        }
-//        JdbcTemplate.update("DELETE FROM post_likes WHERE profile_id= :profile_id", getSqlParameterByModel(new PostLikes(user_ID)));
-//        for (Integer i: postID){
-//            String sql = "DELETE FROM post_tags WHERE post_id= :post_id";
-//            JdbcTemplate.update(sql, getSqlParameterByModel(new PostTag(i)));
-//        }
-//        JdbcTemplate.update("DELETE FROM posts WHERE user_ID= :user_ID", getSqlParameterByModel(new Post(user_ID)));
-//    }
+
 
     public void deleteUserByEmail(String email) {
         String sql = "DELETE FROM users WHERE email = :email";
@@ -211,48 +186,6 @@ public class UserDAOImplem implements UserDAO {
         return parameterSource;
     }
 
-//    private SqlParameterSource getSqlParameterByModel(Post post){
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        if(post != null){
-//            parameterSource.addValue("postID", post.getPostID());
-//            parameterSource.addValue("user_ID", post.getPostID());
-//        }
-//        return parameterSource;
-//    }
-//
-//    private SqlParameterSource getSqlParameterByModel(CommentLikes commentLikes){
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        if(commentLikes != null){
-//            parameterSource.addValue("profile_ID", commentLikes.getProfile_ID());
-//        }
-//        return parameterSource;
-//    }
-//
-//    private SqlParameterSource getSqlParameterByModel(Comment comment){
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        if(comment != null){
-//            parameterSource.addValue("profile_ID", comment.getId());
-//            parameterSource.addValue("reply_of_ID", comment.getReply());
-//        }
-//        return parameterSource;
-//    }
-//
-//    private SqlParameterSource getSqlParameterByModel(PostLikes postLikes){
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        if(postLikes != null){
-//            parameterSource.addValue("profile_id", postLikes.getProfile_ID());
-//        }
-//        return parameterSource;
-//    }
-//
-//    private SqlParameterSource getSqlParameterByModel(PostTag postTag){
-//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-//        if(postTag != null){
-//            parameterSource.addValue("post_id", postTag.getPostID());
-//        }
-//        return parameterSource;
-//    }
-
     private static final class UserMapper implements RowMapper {
 
         public User mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -370,4 +303,73 @@ public class UserDAOImplem implements UserDAO {
             return userCommentsDTO;
         }
     }
+
+    //    @Transactional
+//    public void deleteUserByID(int user_ID) {
+//        deleteCommentsByUser(user_ID);
+//        deletePostsByUser(user_ID);
+//
+//        JdbcTemplate.update("DELETE FROM users WHERE user_ID = :user_ID", getSqlParameterByModel(new User(user_ID)));
+//    }
+//
+//    private void deleteCommentsByUser(int user_ID){
+//        JdbcTemplate.update("DELETE FROM comments_likes WHERE profile_ID= :profile_ID", getSqlParameterByModel(new CommentLikes(user_ID)));
+//        JdbcTemplate.update("DELETE FROM comments WHERE reply_of_ID= :reply_of_ID AND profile_ID= :profile_ID", getSqlParameterByModel(new Comment(user_ID,user_ID)));
+//    }
+//
+//    private void deletePostsByUser(int user_ID){
+//        List<ResponsePostDTO> posts = postDAO.getAllPostsByUser(user_ID);
+//        List<Integer> postID = new ArrayList();
+//        for (ResponsePostDTO r: posts){
+//            postID.add(r.getPostID());
+//        }
+//        JdbcTemplate.update("DELETE FROM post_likes WHERE profile_id= :profile_id", getSqlParameterByModel(new PostLikes(user_ID)));
+//        for (Integer i: postID){
+//            String sql = "DELETE FROM post_tags WHERE post_id= :post_id";
+//            JdbcTemplate.update(sql, getSqlParameterByModel(new PostTag(i)));
+//        }
+//        JdbcTemplate.update("DELETE FROM posts WHERE user_ID= :user_ID", getSqlParameterByModel(new Post(user_ID)));
+//    }
+
+    //    private SqlParameterSource getSqlParameterByModel(Post post){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(post != null){
+//            parameterSource.addValue("postID", post.getPostID());
+//            parameterSource.addValue("user_ID", post.getPostID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(CommentLikes commentLikes){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(commentLikes != null){
+//            parameterSource.addValue("profile_ID", commentLikes.getProfile_ID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(Comment comment){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(comment != null){
+//            parameterSource.addValue("profile_ID", comment.getId());
+//            parameterSource.addValue("reply_of_ID", comment.getReply());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(PostLikes postLikes){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(postLikes != null){
+//            parameterSource.addValue("profile_id", postLikes.getProfile_ID());
+//        }
+//        return parameterSource;
+//    }
+//
+//    private SqlParameterSource getSqlParameterByModel(PostTag postTag){
+//        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+//        if(postTag != null){
+//            parameterSource.addValue("post_id", postTag.getPostID());
+//        }
+//        return parameterSource;
+//    }
 }

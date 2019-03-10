@@ -19,6 +19,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping(value = "/user")
@@ -56,10 +59,10 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/register")
     public UserDTO saveUser(@RequestBody User user, HttpSession session)
-            throws  InvalidPasswordException, AlreadyExistsException, EmptyResultDataAccessException {
+            throws InvalidPasswordException, AlreadyExistsException{
         try {
-            if (dao.findUserByEmail(user.getEmail()) != null || dao.findUserByUsername(user.getUsername()) != null) {
-                throw new AlreadyExistsException("You have already registered with this email or username.");
+            if (dao.findUserByEmail(user.getEmail()) != null||dao.findUserByUsername(user.getUsername()) != null) {
+                throw new AlreadyExistsException("You have already registered with this email.");
             }
         }
         catch (EmptyResultDataAccessException e){
@@ -173,4 +176,12 @@ public class UserController extends BaseController {
         }
         return userUpvotedPosts;
     }
+
+    private boolean checkIfEmail(String email){
+        Pattern p = Pattern.compile("\\b[A-Z0-9._%-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
+        Matcher m = p.matcher(email);
+        return m.find();
+    }
+
+
 }

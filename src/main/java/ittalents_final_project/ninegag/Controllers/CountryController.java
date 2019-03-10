@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping(value = "/country")
@@ -30,7 +29,12 @@ public class CountryController extends BaseController{
     @DeleteMapping(value = "/delete")
     public void removeCountry(@RequestBody Country country, HttpSession session) throws NotLoggedException, PermitionDeniedException {
         if (validateAdmin(session)) {
-            dao.deleteCountryByID(country.getCountry_ID());
+            if(dao.getById(country.getCountry_ID())==null){
+                throw new NullPointerException("There is no such country in the list.");
+            }
+            else{
+                dao.deleteCountryByID(country.getCountry_ID());
+            }
         } else {
             throw new PermitionDeniedException("You are not admin");
         }
