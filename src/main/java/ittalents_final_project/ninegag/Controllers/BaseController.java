@@ -33,7 +33,7 @@ public abstract class BaseController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorMsg handleDuplicateUsername(Exception e) {
         log.error(e.getMessage());
-        return new ErrorMsg("Username is already taken.", HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ErrorMsg("You cannot delete it as it is a foreign key.", HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
     }
 
 

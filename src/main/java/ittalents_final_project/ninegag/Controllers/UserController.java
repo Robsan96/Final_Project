@@ -59,18 +59,19 @@ public class UserController extends BaseController {
     @PostMapping(value = "/register")
     public UserDTO saveUser(@RequestBody User user, HttpSession session)
             throws InvalidPasswordException, AlreadyExistsException, NotAnEmailOrInvalidUsernameException {
-        if(user.getEmail().contains(" ")){
+        if(user.getEmail().contains(" ")||user.getEmail().length()<5){
             throw new NotAnEmailOrInvalidUsernameException("This is not a valid email.");
         }
         if(user.getUsername().contains(" ")||user.getUsername().length()<3){
             throw new NotAnEmailOrInvalidUsernameException("This is not a valid username.");
         }
-        try {
-            if (dao.findUserByEmail(user.getEmail()) != null||dao.findUserByUsername(user.getUsername()) != null) {
-                throw new AlreadyExistsException("You have already registered with this email.");
-            }
+        if (dao.findUserByUsername(user.getUsername()) != null) {
+            throw new AlreadyExistsException("This username is already taken.");
         }
-        catch (EmptyResultDataAccessException e){
+        if (dao.findUserByEmail(user.getEmail()) != null) {
+            throw new AlreadyExistsException("You have already registered with this email.");
+        }
+        else{
             if (validatePassword(user.getPassword())) {
                 setPassword(user);
                 dao.addUser(user);
@@ -86,8 +87,8 @@ public class UserController extends BaseController {
                 throw new InvalidPasswordException();
             }
         }
-        return null;
     }
+
 
     @PostMapping(value = "/updateUser")
     public UserDTO updateUser(@RequestBody User user, HttpSession session) throws NotLoggedException {

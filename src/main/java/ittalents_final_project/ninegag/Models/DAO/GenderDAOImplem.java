@@ -2,6 +2,7 @@ package ittalents_final_project.ninegag.Models.DAO;
 
 import ittalents_final_project.ninegag.Models.POJO.Gender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,22 +18,35 @@ public class GenderDAOImplem implements GenderDAO {
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
+    org.springframework.jdbc.core.JdbcTemplate jdbc;
+
+    @Autowired
     public void setNamedParameterJdbcTemplate(NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
     @Override
     public Gender getByType(String gender_Type) {
-        String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_Type = :gender_Type";
+        try {
+            String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_Type = ?";
 
-        return (Gender) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Gender(gender_Type)), new GenderDAOImplem.GenderMapper());
+            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_Type}, new GenderDAOImplem.GenderMapper());
+        }
+        catch (EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
     @Override
     public Gender getById(int gender_ID) {
-        String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_ID = :gender_ID";
+        try {
+            String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_ID = ?";
 
-        return (Gender) namedParameterJdbcTemplate.queryForObject(sql, getSqlParameterByModel(new Gender(gender_ID)), new GenderDAOImplem.GenderMapper());
+            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_ID}, new GenderDAOImplem.GenderMapper());
+        }
+        catch (EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
     @Override

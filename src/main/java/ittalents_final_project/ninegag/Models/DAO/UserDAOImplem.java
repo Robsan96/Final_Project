@@ -5,6 +5,7 @@ import ittalents_final_project.ninegag.Models.POJO.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -27,6 +28,8 @@ public class UserDAOImplem implements UserDAO {
     PostDAO postDAO;
     @Autowired
     CommentDAO commentDAO;
+    @Autowired
+    org.springframework.jdbc.core.JdbcTemplate jdbc;
 
 
     @Autowired
@@ -71,16 +74,25 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public User findUserByEmail(String email) {
-        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
-                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE email = :email";
-        return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(email)), new UserMapper());
+        try {
+            String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account,\" +\n" +
+                    "                \" google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE email = ?";
+            return (User) jdbc.queryForObject(sql, new Object[]{email}, new UserMapper());
+        }
+        catch (EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
     public User findUserByUsername(String username) {
-        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
-                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE username = :username";
-
-        return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(username)), new UserMapper());
+        try {
+            String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
+                    " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE username = ?";
+            return (User) jdbc.queryForObject(sql, new Object[]{username}, new UserMapper());
+        }
+        catch (EmptyResultDataAccessException e){
+            return null;
+        }
     }
 
     public User findUserByID(int user_ID) {
