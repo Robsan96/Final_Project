@@ -38,12 +38,12 @@ public class FileController extends BaseController {
     static Logger log = Logger.getLogger(FileController.class.getName());
 
 
-    private static final String FILE_PATH = "C:\\Users\\NN\\Desktop\\Pictures";
+    private static final String FILE_PATH = "C:\\Users\\Konstantin\\Pictures";
 
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
     @PostMapping(value = "/images/profiles")
-    public void upploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
+    public void uploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
             throws NotLoggedException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);

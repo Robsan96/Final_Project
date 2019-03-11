@@ -96,10 +96,9 @@ public class UserDAOImplem implements UserDAO {
     }
 
     public User findUserByID(int user_ID) {
-        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account," +
-                " google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = :user_ID";
-
-        return (User) JdbcTemplate.queryForObject(sql, getSqlParameterByModel(new User(user_ID)), new UserMapper());
+        String sql = "SELECT user_ID, email, username, password, full_name, date_created, birthday, gender_ID, country_ID, description, facebook_account,"+
+                "google_account, avatar, sensitive_filter, admin_privileges, salt FROM users WHERE user_ID = ?";
+        return (User) jdbc.queryForObject(sql, new Object[]{user_ID}, new UserMapper());
     }
 
     public void changePassword(int user_ID, String newPassword){
