@@ -43,7 +43,7 @@ public class FileController extends BaseController {
     public static final String FILE_NAME = System.currentTimeMillis() + ".jpg";
 
     @PostMapping(value = "/images/profiles")
-    public void uploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
+    public String uploadImageToProfile(@RequestParam(value = "URL") String url, HttpSession session)
             throws NotLoggedException {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
@@ -56,6 +56,7 @@ public class FileController extends BaseController {
             e.printStackTrace();
         }
         daoU.updateUserByID(user);
+        return "Avatar successfully updated.";
 
     }
 

@@ -38,6 +38,9 @@ public class UserController extends BaseController {
 
     @PostMapping(value = "/login")
     public UserDTO login(@RequestBody User user, HttpSession session) throws WrongEmailOrPasswordException, EmptyResultDataAccessException {
+        if (dao.findUserByEmail(user.getEmail()) == null) {
+            throw new WrongEmailOrPasswordException();
+        }
         boolean passwordMatch = PasswordUtils.verifyUserPassword(user.getPassword(), dao.findUserByEmail(user.getEmail()).getPassword(), dao.findUserByEmail(user.getEmail()).getSalt());
         if (passwordMatch) {
             session.setAttribute(LOGGED, dao.findUserByEmail(user.getEmail()));
