@@ -87,7 +87,7 @@ public abstract class BaseController {
         return new ErrorMsg("Not found.", HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({InvalidPasswordException.class})
+    @ExceptionHandler({InvalidPasswordException.class, PermitionDeniedException.class})
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     public ErrorMsg handleInvalidPassword(Exception e) {
         log.error(e.getMessage());

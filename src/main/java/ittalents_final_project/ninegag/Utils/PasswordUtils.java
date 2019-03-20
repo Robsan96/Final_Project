@@ -35,7 +35,7 @@ public class PasswordUtils {
             return skf.generateSecret(spec).getEncoded();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             log.error(e.getMessage());
-            throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
+            throw new AssertionError("Error while hashing the password: " + e.getMessage(), e);
         } finally {
             spec.clearPassword();
         }

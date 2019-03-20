@@ -6,7 +6,6 @@ import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
 import ittalents_final_project.ninegag.Utils.Exceptions.PermitionDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;

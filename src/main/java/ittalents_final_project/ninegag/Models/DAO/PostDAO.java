@@ -104,7 +104,7 @@ public class PostDAO {
     }
 
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
-        String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.profile_ID, s.section_ID," +
+        String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.user_ID, s.section_ID," +
                 "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
                 "FROM comments  WHERE post_ID=p.post_ID )AS comments," +
                 "(SELECT COUNT(*)-(SELECT COUNT(*)FROM post_likes WHERE post_id=p.post_ID AND status=0)" +
