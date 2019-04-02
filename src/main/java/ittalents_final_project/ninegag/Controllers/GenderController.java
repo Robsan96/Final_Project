@@ -1,6 +1,6 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.GenderDAOImplem;
+import ittalents_final_project.ninegag.Models.DAO.Implement.GenderDAOImpl;
 import ittalents_final_project.ninegag.Models.POJO.Gender;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 public class GenderController extends BaseController {
 
     @Autowired
-    GenderDAOImplem dao;
+    GenderDAOImpl dao;
 
     @PostMapping(value = "/add")
     public String addGender(@RequestBody Gender gender, HttpSession session) throws NotLoggedException, PermitionDeniedException,BadParamException{

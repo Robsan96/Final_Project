@@ -1,5 +1,6 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
+import ittalents_final_project.ninegag.Models.DAO.Interface.SectionDAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import org.apache.log4j.Logger;
@@ -18,20 +19,22 @@ import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class SectionDAO {
+public class SectionDAOimpl implements SectionDAO {
 
-    static Logger log = Logger.getLogger(SectionDAO.class.getName());
+    static Logger log = Logger.getLogger(SectionDAOimpl.class.getName());
 
     @Autowired
-    private PostDAO daoP;
+    private PostDAOimpl daoP;
     @Autowired
     private JdbcTemplate jdbcTemplate;
     public static final String SQL = "SELECT section_id , section_name FROM sections";
 
+    @Override
     public List<Section> getAll() {
         return jdbcTemplate.query(SQL, (resultSet, i) -> mapRow(resultSet));
     }
 
+    @Override
     public Section getByName(String section_name) {
         try {
             String sql = SQL + " WHERE section_name= ?";
@@ -43,6 +46,7 @@ public class SectionDAO {
         }
     }
 
+    @Override
     public Section getById(int id) {
         try {
             String sql = SQL + " WHERE section_ID= ?";
@@ -58,6 +62,7 @@ public class SectionDAO {
         return new Section(rs.getInt("section_ID"), rs.getString("section_name"));
     }
 
+    @Override
     public int addSection(String name) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
@@ -69,6 +74,7 @@ public class SectionDAO {
         return keyHolder.getKey().intValue();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteSection(Section section) {
         List<ResponsePostDTO> posts = daoP.getAllPostsBySection(section.getId(), "fresh");

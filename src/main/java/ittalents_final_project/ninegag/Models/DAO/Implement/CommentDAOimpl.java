@@ -1,5 +1,6 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
+import ittalents_final_project.ninegag.Models.DAO.Interface.CommentDAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class CommentDAO {
+public class CommentDAOimpl implements CommentDAO {
 
-    static Logger log = Logger.getLogger(CommentDAO.class.getName());
+    static Logger log = Logger.getLogger(CommentDAOimpl.class.getName());
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -32,6 +33,7 @@ public class CommentDAO {
             ",(SELECT COUNT(*) FROM comments WHERE reply_of_ID=c.comment_ID)AS replies" +
             ",u.username AS ownerName,u.avatar AS ownerAvatar FROM comments c JOIN users u ON(c.profile_ID=u.user_ID)";
 
+    @Override
     public int addComment(Comment comment) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
@@ -45,6 +47,7 @@ public class CommentDAO {
         return keyHolder.getKey().intValue();
     }
 
+    @Override
     public int addReply(Comment comment) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
@@ -60,6 +63,7 @@ public class CommentDAO {
         return keyHolder.getKey().intValue();
     }
 
+    @Override
     public ResponseCommentDTO getById(int id) {
         try {
             String sql = SELECT_COMMENT + "WHERE comment_ID=?";
@@ -75,6 +79,7 @@ public class CommentDAO {
         }
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteComment(Comment comment) {
         List<Comment> coments = this.getAllByComment(comment);
@@ -94,6 +99,7 @@ public class CommentDAO {
         return comments;
     }
 
+    @Override
     public List<Comment> getAllByPost(Post post) {
 
         String sql = "SELECT comment_ID FROM comments WHERE post_ID=? ";
@@ -102,6 +108,7 @@ public class CommentDAO {
         return comments;
     } // Using this method for deleting !
 
+    @Override
     public List<ResponseCommentDTO> getAllByCommentDTO(int commentId) {
         String sql = SELECT_COMMENT + "WHERE reply_of_ID=? ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{commentId}, (resultSet, i) -> mapRowR(resultSet));
@@ -112,6 +119,7 @@ public class CommentDAO {
         }
     }
 
+    @Override
     public List<ResponseCommentDTO> getAllFreshByPostDTO(int postId) {
         String sql = SELECT_COMMENT + "WHERE post_ID=? AND reply_of_ID IS NULL ORDER BY date_time_created DESC";
         List<ResponseCommentDTO> comments = jdbcTemplate.query(sql, new Object[]{postId},
@@ -119,12 +127,14 @@ public class CommentDAO {
         return comments;
     }
 
-    private List<Comment> getAllByComment(Comment comment) {
+    @Override
+    public List<Comment> getAllByComment(Comment comment) {
         String sql = "SELECT * FROM comments WHERE reply_of_ID=? ORDER BY date_time_created DESC";
         List<Comment> comments = jdbcTemplate.query(sql, new Object[]{comment.getId()}, (resultSet, i) -> mapRow(resultSet));
         return comments;
     }
 
+    @Override
     public int voteComment(long userId, int commentId, boolean vote) {
         if (jdbcTemplate.queryForObject("SELECT COUNT(*) " +
                         "FROM comments_likes WHERE profile_id=? AND comment_id=?",

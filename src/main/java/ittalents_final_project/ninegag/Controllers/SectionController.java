@@ -1,6 +1,6 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
+import ittalents_final_project.ninegag.Models.DAO.Implement.SectionDAOimpl;
 import ittalents_final_project.ninegag.Models.POJO.Section;
 import ittalents_final_project.ninegag.Utils.Exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
 public class SectionController extends BaseController {
 
     @Autowired
-    SectionDAO dao;
+    SectionDAOimpl dao;
 
 
     @GetMapping(value = "/")

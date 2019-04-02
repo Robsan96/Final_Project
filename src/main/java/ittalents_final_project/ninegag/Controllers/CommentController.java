@@ -1,7 +1,7 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.CommentDAO;
-import ittalents_final_project.ninegag.Models.DAO.PostDAO;
+import ittalents_final_project.ninegag.Models.DAO.Implement.CommentDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.PostDAOimpl;
 import ittalents_final_project.ninegag.Models.DTO.ResponseCommentDTO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
@@ -18,9 +18,9 @@ import java.util.List;
 public class CommentController extends BaseController {
 
     @Autowired
-    PostDAO daoP;
+    PostDAOimpl daoP;
     @Autowired
-    CommentDAO daoC;
+    CommentDAOimpl daoC;
 
     @PostMapping(value = "/add")
     public String addComment(@RequestBody Comment comment, HttpSession session)
@@ -30,13 +30,13 @@ public class CommentController extends BaseController {
         comment.setProfile(user.getUser_ID());
         comment.setContent(comment.getContent().trim());
         if (comment.getContent() == null || comment.getContent().isEmpty()) {
-            throw new EmptyParameterException("Comment field 'content' cant be null or empty !");
+            throw new EmptyParameterException("CommentDAO field 'content' cant be null or empty !");
         }
         Post post = daoP.getPostById(comment.getPost());
         if (post == null) {
-            throw new BadParamException("Post with that id does not exist and cant be commented");
+            throw new BadParamException("PostDAO with that id does not exist and cant be commented");
         }
-        return "Comment was added successfully with ID -> " + daoC.addComment(comment);
+        return "CommentDAO was added successfully with ID -> " + daoC.addComment(comment);
     }
 
     @PostMapping(value = "/add/reply")
@@ -47,7 +47,7 @@ public class CommentController extends BaseController {
         Comment mainComment = daoC.getById(comment.getReply());
         comment.setContent(comment.getContent().trim());
         if (comment.getContent() == null || comment.getContent().isEmpty()) {
-            throw new EmptyParameterException("Comment field 'content' cannot be null or empty!");
+            throw new EmptyParameterException("CommentDAO field 'content' cannot be null or empty!");
         }
         if (mainComment == null) {
             throw new BadParamException("cant reply on non-existing comment!");
@@ -113,16 +113,16 @@ public class CommentController extends BaseController {
         comment.setProfile(user.getUser_ID());
         comment.setContent(comment.getContent().trim());
         if (daoC.getById(comment.getId()) == null) {
-            throw new NullPointerException("Comment with that id does not exist");
+            throw new NullPointerException("CommentDAO with that id does not exist");
         }
         if (comment.getContent() == null || comment.getContent().isEmpty()) {
-            throw new EmptyParameterException("Comment field 'content' cant be null or empty !");
+            throw new EmptyParameterException("CommentDAO field 'content' cant be null or empty !");
         }
         if (comment.getProfile() == user.getUser_ID() || validateAdmin(session)) {
             if (daoC.uppdateComment(comment) > 0) {
-                return "Comment with ID " + comment.getId() + " updated!";
+                return "CommentDAO with ID " + comment.getId() + " updated!";
             } else {
-                return "Comment wasn't updated for some reason pls try again later or contact support!";
+                return "CommentDAO wasn't updated for some reason pls try again later or contact support!";
             }
         } else {
             throw new PermitionDeniedException("You don't have access to that option!");
@@ -136,16 +136,16 @@ public class CommentController extends BaseController {
         User user = (User) session.getAttribute(LOGGED);
         Comment comment = daoC.getById(commentId);
         if (comment == null) {
-            throw new BadParamException("Comment with that id does not exist !");
+            throw new BadParamException("CommentDAO with that id does not exist !");
         }
         if (user.getUser_ID() != comment.getProfile() && !validateAdmin(session)) {
             throw new PermitionDeniedException("You don't have access to that option");
         }
         try {
-            return "Comment deleted with id " + daoC.deleteComment(comment);
+            return "CommentDAO deleted with id " + daoC.deleteComment(comment);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return "Comment can not be deleted right now , pls try again later or contact support";
+            return "CommentDAO can not be deleted right now , pls try again later or contact support";
         }
     }
 }

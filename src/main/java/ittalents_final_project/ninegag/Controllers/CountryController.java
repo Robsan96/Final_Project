@@ -1,6 +1,6 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.CountryDAOImplem;
+import ittalents_final_project.ninegag.Models.DAO.Implement.CountryDAOImpl;
 import ittalents_final_project.ninegag.Models.POJO.Country;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 public class CountryController extends BaseController{
 
     @Autowired
-    CountryDAOImplem dao;
+    CountryDAOImpl dao;
 
     @PostMapping(value = "/add")
     public String addCountry(@RequestBody Country country, HttpSession session) throws NotLoggedException, PermitionDeniedException, BadParamException {

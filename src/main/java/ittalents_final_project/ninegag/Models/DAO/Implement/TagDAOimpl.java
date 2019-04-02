@@ -1,5 +1,6 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
+import ittalents_final_project.ninegag.Models.DAO.Interface.TagDAO;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -16,15 +17,16 @@ import java.sql.Statement;
 import java.util.List;
 
 @Component
-public class TagDAO {
+public class TagDAOimpl implements TagDAO {
 
-    static Logger log = Logger.getLogger(TagDAO.class.getName());
+    static Logger log = Logger.getLogger(TagDAOimpl.class.getName());
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     public static final String SQL = "SELECT tag_ID,tag_name FROM tags";
 
+    @Override
     public Tag getByName(String name) {
         try {
             String sql = SQL + " WHERE tag_name=?";
@@ -35,6 +37,7 @@ public class TagDAO {
         }
     }
 
+    @Override
     public Tag getById(int tagId) {
         try {
             String sql = SQL + " WHERE tag_id=?";
@@ -45,11 +48,13 @@ public class TagDAO {
         }
     }
 
+    @Override
     public List<Tag> getTagsByPost(int postId) {
         String sql = "SELECT DISTINCT tag_ID,tag_name FROM tags t JOIN post_tags p USING(tag_ID) WHERE p.post_ID=?";
         return jdbcTemplate.query(sql, new Object[]{postId}, (resultSet, i) -> mapRow(resultSet));
     }
 
+    @Override
     public void setTags(int postId, List<Tag> tags) {
         String sql = "INSERT INTO post_tags(tag_id,post_id) VALUES(?,?)";
         for (Tag tag : tags) {
@@ -62,6 +67,7 @@ public class TagDAO {
         }
     }
 
+    @Override
     public int addTag(String tagName) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {

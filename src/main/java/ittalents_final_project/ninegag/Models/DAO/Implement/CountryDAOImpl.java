@@ -1,7 +1,7 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
+import ittalents_final_project.ninegag.Models.DAO.Interface.CountryDAO;
 import ittalents_final_project.ninegag.Models.POJO.Country;
-import ittalents_final_project.ninegag.Models.POJO.Gender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -14,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class CountryDAOImplem implements CountryDAO {
+public class CountryDAOImpl implements CountryDAO {
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -31,7 +31,7 @@ public class CountryDAOImplem implements CountryDAO {
         try {
             String sql = "SELECT country_ID, country_name FROM countries WHERE country_name = ?";
 
-            return (Country) jdbc.queryForObject(sql, new Object[]{country_name}, new CountryDAOImplem.CountryMapper());
+            return (Country) jdbc.queryForObject(sql, new Object[]{country_name}, new CountryDAOImpl.CountryMapper());
         }
         catch (EmptyResultDataAccessException e){
             return null;
@@ -43,7 +43,7 @@ public class CountryDAOImplem implements CountryDAO {
                 try {
             String sql = "SELECT country_ID, country_name FROM countries WHERE country_ID = ?";
 
-            return (Country) jdbc.queryForObject(sql, new Object[]{country_ID}, new CountryDAOImplem.CountryMapper());
+            return (Country) jdbc.queryForObject(sql, new Object[]{country_ID}, new CountryDAOImpl.CountryMapper());
         }
         catch (EmptyResultDataAccessException e){
             return null;

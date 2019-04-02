@@ -1,5 +1,6 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
+import ittalents_final_project.ninegag.Models.DAO.Interface.GenderDAO;
 import ittalents_final_project.ninegag.Models.POJO.Gender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,7 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class GenderDAOImplem implements GenderDAO {
+public class GenderDAOImpl implements GenderDAO {
 
     NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -30,7 +31,7 @@ public class GenderDAOImplem implements GenderDAO {
         try {
             String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_Type = ?";
 
-            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_Type}, new GenderDAOImplem.GenderMapper());
+            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_Type}, new GenderDAOImpl.GenderMapper());
         }
         catch (EmptyResultDataAccessException e){
             return null;
@@ -42,7 +43,7 @@ public class GenderDAOImplem implements GenderDAO {
         try {
             String sql = "SELECT gender_ID, gender_Type FROM genders WHERE gender_ID = ?";
 
-            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_ID}, new GenderDAOImplem.GenderMapper());
+            return (Gender) jdbc.queryForObject(sql, new Object[]{gender_ID}, new GenderDAOImpl.GenderMapper());
         }
         catch (EmptyResultDataAccessException e){
             return null;

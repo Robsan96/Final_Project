@@ -1,4 +1,4 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Interface;
 
 import ittalents_final_project.ninegag.Models.POJO.Gender;
 

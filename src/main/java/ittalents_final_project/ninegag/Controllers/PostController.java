@@ -1,11 +1,10 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.PostDAO;
-import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
-import ittalents_final_project.ninegag.Models.DAO.TagDAO;
+import ittalents_final_project.ninegag.Models.DAO.Implement.PostDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.SectionDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.TagDAOimpl;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Post;
-import ittalents_final_project.ninegag.Models.POJO.Section;
 import ittalents_final_project.ninegag.Models.POJO.User;
 import ittalents_final_project.ninegag.Utils.Exceptions.BadParamException;
 import ittalents_final_project.ninegag.Utils.Exceptions.NotLoggedException;
@@ -20,17 +19,17 @@ import java.util.List;
 public class PostController extends BaseController {
 
     @Autowired
-    PostDAO dao;
+    PostDAOimpl dao;
     @Autowired
-    SectionDAO daoS;
+    SectionDAOimpl daoS;
     @Autowired
-    TagDAO daoT;
+    TagDAOimpl daoT;
 
     @GetMapping(value = "/id/{postId}")
     public ResponsePostDTO getPostById(@PathVariable(value = "postId") int id) throws BadParamException {
         ResponsePostDTO post = dao.getBPostDTO(id, true);
         if (post == null) {
-            throw new BadParamException("Post with that id does not exist!");
+            throw new BadParamException("PostDAO with that id does not exist!");
         }
         return post;
     }
@@ -69,7 +68,7 @@ public class PostController extends BaseController {
         validateLogged(session);
         User user = (User) session.getAttribute(LOGGED);
         if (dao.getPostById(postId) == null) {
-            throw new BadParamException("Post with that Id does not exist!");
+            throw new BadParamException("PostDAO with that Id does not exist!");
         }
         if (dao.votePost(user.getUser_ID(), postId, vote) > 0) {
             return "Voted";
@@ -84,7 +83,7 @@ public class PostController extends BaseController {
         User user = (User) session.getAttribute(LOGGED);
         Post post = dao.getPostById(postId);
         if (post == null) {
-            throw new BadParamException("Post with that Id does not exist!");
+            throw new BadParamException("PostDAO with that Id does not exist!");
         }
         if (user.getUser_ID() == post.getProfileID() || validateAdmin(session)) {
             try {

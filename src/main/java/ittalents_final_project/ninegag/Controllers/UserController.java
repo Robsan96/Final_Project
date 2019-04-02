@@ -1,8 +1,8 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.CountryDAO;
-import ittalents_final_project.ninegag.Models.DAO.GenderDAO;
-import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
+import ittalents_final_project.ninegag.Models.DAO.Interface.CountryDAO;
+import ittalents_final_project.ninegag.Models.DAO.Interface.GenderDAO;
+import ittalents_final_project.ninegag.Models.DAO.Implement.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.UserCommentsDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserDTO;
 import ittalents_final_project.ninegag.Models.DTO.UserPostsDTO;

@@ -1,6 +1,6 @@
-package ittalents_final_project.ninegag.Models.DAO;
+package ittalents_final_project.ninegag.Models.DAO.Implement;
 
-import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
+import ittalents_final_project.ninegag.Models.DAO.Interface.PostDAO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.Comment;
 import ittalents_final_project.ninegag.Models.POJO.Post;
@@ -19,9 +19,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Component
-public class PostDAO {
+public class PostDAOimpl implements PostDAO {
 
-    static Logger log = Logger.getLogger(PostDAO.class.getName());
+    static Logger log = Logger.getLogger(PostDAOimpl.class.getName());
 
     public static final String SQL = "SELECT   p.post_ID, p.title, p.content_URL, p.user_ID, s.section_ID, " +
             "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
@@ -34,11 +34,12 @@ public class PostDAO {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private CommentDAO commentDAO;
+    private CommentDAOimpl commentDAOimpl;
 
     @Autowired
-    private TagDAO tagDAO;
+    private TagDAOimpl tagDAOimpl;
 
+    @Override
     public Post getPostById(int Id) {
         try {
             String sql = "SELECT post_ID, title, content_URL, user_ID, section_ID, " +
@@ -50,21 +51,23 @@ public class PostDAO {
         }
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsBy(String orderd) {
         String sql = SQL;
         sql += OrderByMethod(orderd);
         return jdbcTemplate.query(sql, (resultSet, i) -> mapRowBasicDTO(resultSet));
     }
 
+    @Override
     public ResponsePostDTO getBPostDTO(int Id, boolean showComments) {
         try {
             String sql = SQL + " WHERE post_ID=?";
 
             ResponsePostDTO post = jdbcTemplate.queryForObject(sql, new Object[]{Id},
                     ((resultSet, i) -> mapRowBasicDTO(resultSet)));
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
             if (showComments) {
-                post.setAllComments(commentDAO.getAllByPostDTO(post.getPostID()));
+                post.setAllComments(commentDAOimpl.getAllByPostDTO(post.getPostID()));
             }
             return post;
         } catch (EmptyResultDataAccessException e) {
@@ -73,36 +76,40 @@ public class PostDAO {
         }
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsByUser(int userId) {
         String sql = SQL + "WHERE user_ID=? ORDER BY  votes DESC ";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsByTag(int tag, String orderd) {
         String sql = SQL + " JOIN post_tags t ON(p.post_ID=t.post_id) WHERE t.tag_id=? ";
         sql += OrderByMethod(orderd);
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{tag}, (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsBySection(int sectionId, String orderd) {
         String sql = SQL + "WHERE p.section_ID=? ";
         sql += OrderByMethod(orderd);
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{sectionId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsCommentedBy(int userId) {
         String sql = "SELECT DISTINCT p.post_ID, p.title, p.content_URL, p.user_ID, s.section_ID," +
                 "p.date_time_created, p.see_sensitive, p.attribute_poster, (SELECT COUNT(*)" +
@@ -114,31 +121,34 @@ public class PostDAO {
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsMadeBy(int userId) {
         String sql = SQL + " WHERE p.user_ID=? ORDER BY votes DESC";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public List<ResponsePostDTO> getAllPostsVotedBy(int userId) {
         String sql = SQL + " JOIN post_likes l ON (p.post_ID=l.post_id) WHERE l.profile_id=? ORDER BY votes DESC";
         List<ResponsePostDTO> posts = jdbcTemplate.query(sql, new Object[]{userId},
                 (resultSet, i) -> mapRowBasicDTO(resultSet));
         for (ResponsePostDTO post : posts) {
-            post.setTags(tagDAO.getTagsByPost(post.getPostID()));
+            post.setTags(tagDAOimpl.getTagsByPost(post.getPostID()));
         }
         return posts;
     }
 
+    @Override
     public int addPost(Post post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         this.jdbcTemplate.update(connection -> {
@@ -156,11 +166,12 @@ public class PostDAO {
         return keyHolder.getKey().intValue();
     }
 
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int removePost(Post post) {
-        List<Comment> comments = commentDAO.getAllByPost(post);
+        List<Comment> comments = commentDAOimpl.getAllByPost(post);
         for (Comment comment : comments) {
-            commentDAO.deleteComment(comment);
+            commentDAOimpl.deleteComment(comment);
         }
         jdbcTemplate.update("DELETE FROM post_likes WHERE post_id=?", new Object[]{post.getPostID()});
         jdbcTemplate.update("DELETE FROM post_tags WHERE post_id=?", new Object[]{post.getPostID()});
@@ -168,6 +179,7 @@ public class PostDAO {
         return post.getPostID();
     }
 
+    @Override
     public int votePost(long userId, int postId, Boolean vote) {
 
         if (jdbcTemplate.queryForObject("SELECT COUNT(*) " +

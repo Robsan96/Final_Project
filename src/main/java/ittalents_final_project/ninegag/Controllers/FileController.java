@@ -1,9 +1,9 @@
 package ittalents_final_project.ninegag.Controllers;
 
-import ittalents_final_project.ninegag.Models.DAO.PostDAO;
-import ittalents_final_project.ninegag.Models.DAO.SectionDAO;
-import ittalents_final_project.ninegag.Models.DAO.TagDAO;
-import ittalents_final_project.ninegag.Models.DAO.UserDAOImplem;
+import ittalents_final_project.ninegag.Models.DAO.Implement.PostDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.SectionDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.TagDAOimpl;
+import ittalents_final_project.ninegag.Models.DAO.Implement.UserDAOImplem;
 import ittalents_final_project.ninegag.Models.DTO.RequestPostDTO;
 import ittalents_final_project.ninegag.Models.DTO.ResponsePostDTO;
 import ittalents_final_project.ninegag.Models.POJO.User;
@@ -27,13 +27,13 @@ public class FileController extends BaseController {
     @Autowired
     UserDAOImplem daoU;
     @Autowired
-    PostDAO daoP;
+    PostDAOimpl daoP;
     @Autowired
     RequestPostDTO dtoC;
     @Autowired
-    TagDAO daoT;
+    TagDAOimpl daoT;
     @Autowired
-    SectionDAO daoS;
+    SectionDAOimpl daoS;
 
     static Logger log = Logger.getLogger(FileController.class.getName());
 
